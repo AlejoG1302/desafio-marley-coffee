@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="es" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Demo Consola Marley · de WhatsApp al calendario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- CSS real de la consola (copia de ../css/app.css) para que la interfaz se vea idéntica -->
+    <link rel="stylesheet" href="assets/consola.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* === BASE DEL VIDEO · paleta del deck: carbón, hueso, amarillo y verde Marley === */
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #232323; }
+      body { font-family: 'Archivo', sans-serif; font-size: 16px; line-height: 1.3; color: #F7F5F0; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #stage { position: absolute; inset: 0; overflow: hidden; }
+
+      /* === FONDO: color, brillos, texto fantasma, grano y marcas de registro === */
+      .hf-bgfill { position: absolute; inset: 0; background: #232323; }
+      .hf-glow { position: absolute; width: 1500px; height: 1500px; left: -440px; bottom: -780px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(94,126,41,.46) 0%, rgba(94,126,41,0) 62%); }
+      .hf-glow2 { position: absolute; width: 1300px; height: 1300px; right: -520px; top: -720px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(247,190,0,.17) 0%, rgba(247,190,0,0) 60%); }
+      .hf-ghost { position: absolute; right: -40px; bottom: 30px; font-family: 'Anton', sans-serif; font-size: 440px; line-height: .8;
+        color: rgba(247,245,240,.07); white-space: nowrap; text-transform: uppercase; }
+      .hf-grain { position: absolute; inset: 0; opacity: .08;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+      .hf-reg { position: absolute; width: 34px; height: 34px; border: 0 solid #F7BE00; }
+      .hf-reg.tl { left: 54px; top: 30px; border-left-width: 3px; border-top-width: 3px; }
+      .hf-reg.tr { right: 54px; top: 30px; border-right-width: 3px; border-top-width: 3px; }
+      .hf-reg.bl { left: 54px; bottom: 30px; border-left-width: 3px; border-bottom-width: 3px; }
+      .hf-reg.br { right: 54px; bottom: 30px; border-right-width: 3px; border-bottom-width: 3px; }
+
+      /* === RIEL DE PASOS (arriba) y METADATOS (abajo) === */
+      .hf-rail { position: absolute; left: 120px; right: 120px; top: 40px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; z-index: 40; }
+      .hf-step { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
+      .hf-n { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: rgba(247,245,240,.42); }
+      .hf-l { font-weight: 800; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: rgba(247,245,240,.42); }
+      .hf-bar { flex-basis: 100%; display: block; height: 4px; margin-top: 10px; background: rgba(247,245,240,.16); }
+      .hf-bar b { display: block; width: 100%; height: 100%; background: #F7BE00; transform-origin: 0 50%; }
+      .hf-meta { position: absolute; left: 120px; right: 120px; bottom: 34px; display: flex; justify-content: space-between; z-index: 40;
+        font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; color: rgba(247,245,240,.55); }
+
+      /* === TIPOGRAFÍA COMPARTIDA === */
+      .hf-scene { position: absolute; inset: 0; }
+      .hf-eyebrow { font-weight: 800; font-size: 24px; letter-spacing: .22em; text-transform: uppercase; color: #F7BE00; margin-bottom: 24px; }
+      .hf-big, .hf-h { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; margin: 0; line-height: .98; }
+      .hf-big { font-size: 170px; }
+      .hf-h { font-size: 128px; }
+      .hf-h.sm { font-size: 92px; }
+      .hf-line { display: block; width: fit-content; }
+      .hf-hl { display: inline-block; background: #F7BE00; color: #1C1C1C; padding: .02em .16em .04em; transform: rotate(-1.2deg); }
+      .hf-hl.hf-tilde { padding-top: .17em; } /* la tilde de la Ñ queda dentro del recuadro amarillo */
+      .hf-sub, .hf-p { color: rgba(247,245,240,.8); margin: 0; }
+      .hf-sub { font-size: 38px; line-height: 1.3; max-width: 940px; margin-top: 34px; }
+      .hf-p { font-size: 38px; line-height: 1.32; max-width: 920px; margin-top: 30px; }
+      .hf-p.sm { font-size: 30px; max-width: 470px; margin-top: 24px; }
+      .hf-chips { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+      .hf-chip { font-weight: 700; font-size: 24px; padding: 10px 20px; border: 2px solid rgba(247,245,240,.35); border-radius: 40px; }
+      .hf-chip:first-child { border-color: #F7BE00; color: #F7BE00; }
+      .hf-stat { margin-top: 30px; padding-top: 22px; border-top: 3px solid rgba(247,245,240,.25); display: flex; align-items: center; gap: 22px; }
+      .hf-stat .hf-tick { font-family: 'Anton', sans-serif; font-size: 120px; line-height: 1; color: #F7BE00; }
+      .hf-stat em { font-style: normal; font-size: 26px; line-height: 1.25; color: rgba(247,245,240,.8); max-width: 270px; }
+      /* contador que cambia de valor: ambos valores apilados en la misma celda */
+      .hf-tick { display: inline-grid; overflow: hidden; vertical-align: bottom; }
+      .hf-tick > * { grid-area: 1 / 1; display: block; }
+
+      /* === ESCENA 0 · INTRO === */
+      #intro { display: flex; flex-direction: column; justify-content: center; padding: 0 120px; }
+      .hf-notif { position: absolute; right: 120px; top: 430px; width: 640px; background: #F7F5F0; color: #1C1C1C; border-radius: 22px;
+        padding: 26px 30px; box-shadow: 12px 12px 0 #5E7E29; }
+      .hf-notif header { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; color: #6E6E6E; }
+      .hf-notif p { margin: 14px 0 0; font-size: 30px; line-height: 1.32; }
+      .hf-ava { width: 58px; height: 58px; flex: none; border-radius: 50%; background: #F7BE00; color: #1C1C1C; font-family: 'Anton', sans-serif; font-size: 32px; display: grid; place-items: center; }
+
+      /* === ESCENA TELÉFONO · WhatsApp desde el lado del cliente === */
+      .hf-float { position: absolute; left: 170px; top: 150px; width: 500px; height: 880px; }
+      .hf-phone { width: 100%; height: 100%; background: #121212; border-radius: 66px; padding: 14px; box-shadow: 18px 18px 0 #5E7E29; }
+      .hf-screen { width: 100%; height: 100%; border-radius: 54px; overflow: hidden; background: #ECE5DA; display: flex; flex-direction: column; }
+      .hf-notch { height: 44px; flex: none; position: relative; background: #3B5218; }
+      .hf-notch::after { content: ''; position: absolute; left: 50%; top: 10px; width: 130px; height: 30px; margin-left: -65px; border-radius: 20px; background: #121212; }
+      .hf-head { flex: none; background: #3B5218; color: #fff; display: flex; align-items: center; gap: 16px; padding: 8px 24px 18px; }
+      .hf-head b { display: block; font-size: 26px; font-weight: 700; }
+      .hf-head small { display: block; font-size: 18px; opacity: .8; }
+      .hf-chat { flex: 1; position: relative; overflow: hidden; }
+      .hf-list { position: absolute; left: 18px; right: 18px; top: 18px; display: flex; flex-direction: column; gap: 12px; }
+      .hf-day { align-self: center; background: rgba(255,255,255,.9); color: #5B5B5B; font-size: 18px; font-weight: 700; padding: 6px 16px; border-radius: 10px; }
+      .hf-in, .hf-out { max-width: 88%; font-size: 26px; line-height: 1.3; color: #1C1C1C; padding: 14px 18px 10px; border-radius: 20px; box-shadow: 0 2px 0 rgba(0,0,0,.08); }
+      .hf-in { align-self: flex-start; background: #FFFFFF; border-bottom-left-radius: 6px; }
+      .hf-out { align-self: flex-end; background: #DDEFC7; border-bottom-right-radius: 6px; }
+      .hf-in time, .hf-out time { display: block; text-align: right; font-size: 17px; color: #8B877F; margin-top: 4px; }
+      .hf-typing { position: absolute; left: 0; background: #FFFFFF; border-radius: 20px; border-bottom-left-radius: 6px; padding: 18px 22px; display: flex; gap: 8px; }
+      .hf-typing i { display: block; width: 12px; height: 12px; border-radius: 50%; background: #A39E94; }
+      .hf-input { flex: none; display: flex; align-items: center; gap: 12px; padding: 14px 18px 24px; }
+      .hf-input span { flex: 1; background: #FFFFFF; border-radius: 30px; padding: 14px 22px; font-size: 22px; color: #9A958B; }
+      .hf-input i { width: 56px; height: 56px; border-radius: 50%; background: #5E7E29; display: block; }
+      .hf-caps { position: absolute; left: 780px; right: 120px; top: 140px; bottom: 100px; }
+      .hf-cap { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; }
+
+      /* === ESCENA CONSOLA · ventana con cámara (zoom) sobre la interfaz real === */
+      .hf-ccaps { position: absolute; left: 110px; width: 480px; top: 150px; bottom: 100px; }
+      .hf-win { position: absolute; left: 640px; top: 172px; width: 1200px; height: 719px; border-radius: 18px; overflow: hidden; background: #F4F1EA;
+        box-shadow: 0 0 0 3px #0F0F0F, 16px 16px 0 3px #5E7E29; }
+      .hf-chrome { height: 44px; background: #161616; display: flex; align-items: center; gap: 10px; padding: 0 18px; }
+      .hf-chrome > i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+      .hf-url { margin-left: 18px; width: 620px; height: 28px; border-radius: 14px; background: #2A2A2A; color: #CFCAC0; display: grid; align-items: center; padding: 0 14px;
+        font-family: 'JetBrains Mono', monospace; font-size: 16px; }
+      .hf-url > span { grid-area: 1 / 1; }
+      .hf-vp { position: relative; width: 1200px; height: 675px; overflow: hidden; background: #F4F1EA; }
+      #zo, #zi { position: absolute; inset: 0; }
+      #zo { transform-origin: 50% 50%; }
+      #fit { position: absolute; left: 0; top: 0; width: 1600px; height: 1400px; transform: scale(.75); transform-origin: 0 0; }
+      .hf-app { position: absolute; left: 0; top: 0; width: 1600px; height: 1400px; background: #F4F1EA; overflow: hidden; color: #1C1C1C;
+        font-size: 14px; line-height: 1.45; }
+      .hf-app.app { min-height: 0; }
+      .hf-app .side { position: relative; height: auto; overflow: hidden; }
+      .hf-app .top { position: relative; }
+      .hf-vista { padding: 24px 28px 64px; }
+      .hf-swap { display: grid; }
+      .hf-swap > span { grid-area: 1 / 1; display: block; }
+      .hf-re { position: absolute; inset: 0 0 0 -3px; font-style: normal; background: #E8F0F8; border-left: 3px solid #2F6DA3; border-radius: 6px; padding: 5px 7px; }
+      .hf-mark { position: absolute; border-radius: 10px; background: rgba(247,190,0,.42); mix-blend-mode: multiply; z-index: 20; }
+      .hf-ring { position: absolute; border: 4px solid #F7BE00; border-radius: 10px; opacity: 0; z-index: 21; }
+      #cursor { position: absolute; left: 1000px; top: 560px; width: 44px; height: 44px; z-index: 30; }
+      .hf-crip { position: absolute; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 4px solid #F7BE00; opacity: 0; z-index: 29; }
+      .hf-pill { position: absolute; left: 0; top: 0; z-index: 25; background: #F7BE00; color: #1C1C1C; font-weight: 800; font-size: 24px; padding: 10px 18px;
+        border-radius: 8px; box-shadow: 6px 6px 0 rgba(0,0,0,.35); white-space: nowrap; opacity: 0; }
+
+      /* === ESCENA FINAL === */
+      #outro { display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: 80px; padding: 0 120px; }
+      #outro .hf-big { font-size: 160px; }
+      .hf-flow { display: flex; flex-direction: column; gap: 26px; }
+      .hf-fl { display: grid; grid-template-columns: 90px 1fr; align-items: baseline; border-top: 3px solid rgba(247,245,240,.25); padding-top: 20px; }
+      .hf-fl b { font-family: 'JetBrains Mono', monospace; font-size: 24px; color: #F7BE00; }
+      .hf-fl strong { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; font-size: 64px; line-height: 1; }
+      .hf-fl span { grid-column: 2; font-size: 28px; color: rgba(247,245,240,.78); margin-top: 6px; }
+      .hf-url-final { position: absolute; left: 120px; bottom: 90px; font-family: 'JetBrains Mono', monospace; font-size: 24px; color: rgba(247,245,240,.7); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="46.5" data-width="1920" data-height="1080">
+      <div id="stage">
+        <!-- Fondo persistente -->
+        <div class="hf-bgfill"></div>
+        <div class="hf-glow" data-layout-allow-overflow></div>
+        <div class="hf-glow2" data-layout-allow-overflow></div>
+        <div class="hf-ghost" data-layout-allow-overflow>Agenda</div>
+        <div class="hf-grain"></div>
+        <i class="hf-reg tl"></i><i class="hf-reg tr"></i><i class="hf-reg bl"></i><i class="hf-reg br"></i>
+
+        <!-- ============ INTRO ============ -->
+        <section id="intro" class="hf-scene" data-layout-allow-overflow>
+          <div class="hf-eyebrow">Demo · Consola Marley</div>
+          <h1 class="hf-big">
+            <span class="hf-line">Se acerca</span>
+            <span class="hf-line">tu fecha</span>
+            <span class="hf-line"><span class="hf-hl">de reparto</span></span>
+          </h1>
+          <p class="hf-sub">Cómo un mensaje de WhatsApp llega a la ficha del local y al calendario de despachos.</p>
+          <div class="hf-notif" id="notif">
+            <header><span class="hf-ava">M</span>Marley Coffee · ahora</header>
+            <p>Hola Catalina 👋 Se acerca tu fecha de reparto. ¿Te gustaría programar tu pedido de siempre?</p>
+          </div>
+        </section>
+
+        <!-- ============ ESCENA TELÉFONO ============ -->
+        <section id="pscene" class="hf-scene" data-layout-allow-overflow>
+          <div class="hf-float">
+            <div class="hf-phone">
+              <div class="hf-screen">
+                <div class="hf-notch"></div>
+                <div class="hf-head"><span class="hf-ava">M</span><div><b>Marley Coffee</b><small>Cuenta de empresa</small></div></div>
+                <div class="hf-chat" id="p-chat">
+                  <div class="hf-list" id="p-list" data-layout-allow-overflow data-layout-allow-overlap>
+                    <div class="hf-day" id="m0">viernes, 11 de septiembre</div>
+                    <div class="hf-in" id="m1">Hola Catalina 👋 Se acerca tu fecha de reparto. ¿Te gustaría programar tu pedido de siempre?<time>10:00</time></div>
+                    <div class="hf-out" id="m2">Sí, ¿tienen despacho el jueves?<time>11:58 ✓✓</time></div>
+                    <div class="hf-in" id="m3">Sí, ¿en qué horario te acomoda?<time>11:58</time></div>
+                    <div class="hf-out" id="m4">Entre 12 y 3<time>12:00 ✓✓</time></div>
+                    <div class="hf-in" id="m5">Listo ✅ Tu pedido llega el jueves 17 entre las 12:00 y las 15:00. Si te surge un imprevisto, me avisas y lo cambiamos.<time>12:01</time></div>
+                    <div class="hf-day" id="m6">lunes, 14 de septiembre</div>
+                    <div class="hf-out" id="m7">Tuve un imprevisto y ese día no voy a estar en el local, ¿lo podemos mover?<time>09:00 ✓✓</time></div>
+                    <div class="hf-in" id="m8">Sin problema. Coméntame cuándo puedes para reagendarlo.<time>09:01</time></div>
+                    <div class="hf-out" id="m9">El lunes 21, a la misma hora<time>09:03 ✓✓</time></div>
+                    <div class="hf-in" id="m10">Listo ✅ Quedó reagendado para el lunes 21 entre las 12:00 y las 15:00.<time>09:03</time></div>
+                    <div class="hf-typing" id="ty1"><i></i><i></i><i></i></div>
+                    <div class="hf-typing" id="ty2"><i></i><i></i><i></i></div>
+                    <div class="hf-typing" id="ty3"><i></i><i></i><i></i></div>
+                    <div class="hf-typing" id="ty4"><i></i><i></i><i></i></div>
+                  </div>
+                </div>
+                <div class="hf-input"><span>Mensaje</span><i></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="hf-caps">
+            <div class="hf-cap" data-layout-allow-overlap id="cap-a">
+              <div class="hf-eyebrow">Vie 11 sept · 10:00</div>
+              <h2 class="hf-h"><span class="hf-line">Marley</span><span class="hf-line">escribe</span><span class="hf-line"><span class="hf-hl">primero</span></span></h2>
+              <p class="hf-p">Marley avisa que se acerca su fecha. El cliente responde como siempre y elige el día y la franja que le acomodan.</p>
+              <div class="hf-chips"><span class="hf-chip">Pide cada 19 días</span><span class="hf-chip">Aviso 5 días antes</span><span class="hf-chip">Sin llamar a nadie</span></div>
+            </div>
+            <div class="hf-cap" data-layout-allow-overlap id="cap-b">
+              <div class="hf-eyebrow">Lun 14 sept · 09:00</div>
+              <h2 class="hf-h"><span class="hf-line">Un imprevisto</span><span class="hf-line">no es un viaje</span><span class="hf-line"><span class="hf-hl">perdido</span></span></h2>
+              <p class="hf-p">El cliente avisa por el mismo chat, dice cuándo puede y Marley reagenda según su disponibilidad.</p>
+              <div class="hf-chips"><span class="hf-chip">Reagenda cuando el cliente puede</span><span class="hf-chip">Coordinación lo ve al instante</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ESCENA CONSOLA ============ -->
+        <section id="cscene" class="hf-scene" data-layout-allow-overflow>
+          <div class="hf-ccaps">
+            <div class="hf-cap" data-layout-allow-overlap id="cc-a">
+              <div class="hf-eyebrow">Consola · Ficha</div>
+              <h2 class="hf-h sm"><span class="hf-line">La ficha</span><span class="hf-line"><span class="hf-hl">se llena</span></span><span class="hf-line">sola</span></h2>
+              <p class="hf-p sm">El pedido queda programado y asociado a su local, sin que nadie lo transcriba.</p>
+            </div>
+            <div class="hf-cap" data-layout-allow-overlap id="cc-b">
+              <div class="hf-eyebrow">Consola · Despachos</div>
+              <h2 class="hf-h sm"><span class="hf-line">Directo al</span><span class="hf-line"><span class="hf-hl">calendario</span></span></h2>
+              <p class="hf-p sm">Coordinación ve qué se entrega, qué día y en qué franja.</p>
+              <div class="hf-stat"><span class="hf-tick"><span id="st1-o">4</span><span id="st1-n">5</span></span><em>visitas en la agenda de los próximos 14 días</em></div>
+            </div>
+            <div class="hf-cap" data-layout-allow-overlap id="cc-c">
+              <div class="hf-eyebrow">Consola · Despachos</div>
+              <h2 class="hf-h sm"><span class="hf-line">La entrega</span><span class="hf-line"><span class="hf-hl">se mueve</span></span><span class="hf-line">sola</span></h2>
+              <p class="hf-p sm">Nadie viaja a un local cerrado, y el cambio queda contado.</p>
+              <div class="hf-stat"><span class="hf-tick"><span id="st2-o">2</span><span id="st2-n">3</span></span><em>cambios avisados antes de la visita</em></div>
+            </div>
+          </div>
+
+          <div class="hf-win">
+            <div class="hf-chrome">
+              <i style="background:#B0331A"></i><i style="background:#F7BE00"></i><i style="background:#5E7E29"></i>
+              <div class="hf-url"><span id="url-ficha">alejog1302.github.io/marley-consola/#/local/P-1152</span><span id="url-desp">alejog1302.github.io/marley-consola/#/despachos</span></div>
+            </div>
+            <div class="hf-vp" id="vp">
+              <div id="zo" data-layout-allow-overflow data-layout-allow-overlap><div id="zi"><div id="fit">
+
+                <!-- ===== Consola · Ficha del local (DOM real, estado del vie 11) ===== -->
+                <div class="app hf-app" id="app-ficha">
+                  <aside class="side">
+                    <div class="marca"><div class="logo">MARLEY</div><span class="sub">Consola B2B · food service</span></div>
+                    <nav><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg><span>Resumen</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Hoy</span><em class="badge">7</em></a><a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13"></path><path d="M9 21v-6h6v6"></path></svg><span>Locales</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"></path></svg><span>Conversaciones</span><em class="badge">3</em></a><span class="nav-grupo">Operación</span><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg><span>Pedidos</span></a><a class="" id="nav-desp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg><span>Despachos</span><em class="badge">1</em></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"></path></svg><span>Servicio técnico</span><em class="badge">2</em></a><span class="nav-grupo">Sistema</span><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"></path><circle cx="15" cy="6" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg><span>Reglas</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7V3M15 7V3"></path><path d="M6 7h12v4a6 6 0 0 1-12 0z"></path><path d="M12 17v4"></path></svg><span>Integraciones</span></a></nav>
+                    <div class="side-pie"><span class="sint">Datos sintéticos</span><p>Prototipo · Desafío Marley Coffee. Corte al lunes, 14 de septiembre.</p></div>
+                  </aside>
+                  <main class="main">
+                    <header class="top">
+                      <div><h1>Ficha del local</h1><p class="desc">Todo lo que pasa con un local, en un solo lugar</p></div>
+                      <div class="alcance"><button class="on">Piloto · 14 locales</button><button class="">Red completa · 2.410</button></div>
+                      <input class="buscar" placeholder="Buscar local, RUT o máquina" value="" />
+                    </header>
+                    <div class="hf-vista">
+                      <a class="volver">← Locales</a>
+                      <header class="card ficha-cab">
+                        <div><h2>Minera Aconcagua</h2><p class="meta">OCS · Santiago, RM · P-1152<span class="tag">Piloto</span></p></div>
+                        <div><span class="sem sem-verde"><i></i>Verde · 1 pts</span></div>
+                        <div class="ficha-acc"><a class="btn">Abrir conversación</a></div>
+                      </header>
+                      <section class="grid g-ficha">
+                        <article class="card" id="card-id">
+                          <h3>Identidad del local</h3>
+                          <dl class="datos">
+                            <dt>RUT</dt><dd>76.254.978-6</dd>
+                            <dt>Máquina</dt><dd>MQ-66292</dd>
+                            <dt>Mantención</dt><dd>hace 30 días</dd>
+                            <dt id="ag-dt">Agenda</dt>
+                            <dd class="hf-swap" id="ag-dd"><span id="ag-old">Aviso enviado · esperando respuesta<small>Fecha estimada mié 16</small></span><span id="ag-new">🚚 Reparto jue 17 · 12:00–15:00<small>✓ Programado por el cliente por WhatsApp</small></span></dd>
+                            <dt>Contacto</dt><dd>Catalina Fuentes</dd>
+                            <dt>Teléfono</dt><dd>+56 9 6439 1108</dd>
+                            <dt>Operación</dt><dd>Marley directo</dd>
+                            <dt>Promesa de entrega</dt><dd>48 horas</dd>
+                            <dt>Pide cada</dt><dd>19 días</dd>
+                            <dt>Último pedido</dt><dd class="hf-swap"><span id="up-old">hace 20 días · $148.808</span><span id="up-new">hoy · $148.808</span></dd>
+                            <dt>Ficha</dt><dd>Completa</dd>
+                          </dl>
+                        </article>
+                        <article class="card">
+                          <h3>Por qué está en este color</h3>
+                          <ul class="porque"><li><span class="peso">+1</span><div><b>Entrega fuera de promesa · últimos 90 días</b><small>1 de 5 pedidos</small></div></li></ul>
+                          <div class="escala">Total <b>1 pts</b> · amarillo desde 4 · rojo desde 7</div>
+                        </article>
+                        <article class="card">
+                          <h3>Condiciones de su contrato</h3>
+                          <table class="mini">
+                            <thead><tr><th>Producto</th><th class="num">Lista</th><th class="num">Contrato</th></tr></thead>
+                            <tbody><tr><td>Grano One Love · 1 kg</td><td class="num">$21.900</td><td class="num">$19.491</td></tr><tr><td>Grano Buffalo Soldier · 1 kg</td><td class="num">$22.900</td><td class="num">$20.381</td></tr><tr class="habitual"><td>Grano Get Up Stand Up · 1 kg</td><td class="num">$20.900</td><td class="num">$18.601</td></tr><tr><td>Grano Lively Up · 1 kg</td><td class="num">$23.900</td><td class="num">$21.271</td></tr><tr><td>Kit de limpieza de máquina</td><td class="num">$8.900</td><td class="num">$7.921</td></tr></tbody>
+                          </table>
+                          <p class="nota">Descuento de contrato 11%. En verde, su producto habitual: es el que ofrece el bot cuando pide «lo de siempre».</p>
+                        </article>
+                      </section>
+                      <section class="grid g-ficha2">
+                        <article class="card"><h3 id="tl-h3">Línea de tiempo</h3><ol class="linea" id="tl-list"><li class="ev"><time>11 sept</time><div><b>Pedido PD-20677</b> · 8 kg · $148.808<small>WhatsApp · Programado</small></div></li><li class="ev"><time>22 ago</time><div><b>Pedido PD-06668</b> · 8 kg · $148.808<small>WhatsApp · Entregado · a tiempo</small></div></li><li class="ev"><time>4 ago</time><div><b>Pedido PD-06667</b> · 7 kg · $130.207<small>WhatsApp · Entregado · a tiempo</small></div></li><li class="ev ev-tarde"><time>17 jul</time><div><b>Pedido PD-06666</b> · 7 kg · $130.207<small>WhatsApp · Entregado · fuera de promesa</small></div></li><li class="ev"><time>1 jul</time><div><b>Pedido PD-06665</b> · 6 kg · $111.606<small>Correo · Entregado · a tiempo</small></div></li><li class="ev"><time>11 jun</time><div><b>Pedido PD-06664</b> · 8 kg · $148.808<small>Mensajería · Entregado · a tiempo</small></div></li><li class="ev"><time>26 may</time><div><b>Pedido PD-06663</b> · 7 kg · $130.207<small>Digital · Entregado · a tiempo</small></div></li><li class="ev ev-tarde"><time>7 may</time><div><b>Pedido PD-06662</b> · 8 kg · $148.808<small>Digital · Entregado · fuera de promesa</small></div></li><li class="ev"><time>19 abr</time><div><b>Pedido PD-06661</b> · 4 kg · $74.404<small>Mensajería · Entregado · a tiempo</small></div></li></ol></article>
+                        <article class="card"><h3>Pedidos</h3><div class="tabla-wrap"><table>
+                          <thead><tr><th>Pedido</th><th>Fecha</th><th>Canal</th><th class="num">Kg</th><th class="num">Total</th><th>Estado</th></tr></thead>
+                          <tbody id="tr-list"><tr><td>PD-20677</td><td>11 sept</td><td>WhatsApp</td><td class="num">8</td><td class="num">$148.808</td><td><span class="estado e-programado">Programado</span></td></tr><tr><td>PD-06668</td><td>22 ago</td><td>WhatsApp</td><td class="num">8</td><td class="num">$148.808</td><td><span class="estado e-entregado">Entregado</span></td></tr><tr><td>PD-06667</td><td>4 ago</td><td>WhatsApp</td><td class="num">7</td><td class="num">$130.207</td><td><span class="estado e-entregado">Entregado</span></td></tr><tr><td>PD-06666</td><td>17 jul</td><td>WhatsApp</td><td class="num">7</td><td class="num">$130.207</td><td><span class="estado e-entregado">Entregado</span> <span class="tarde">tarde</span></td></tr><tr><td>PD-06665</td><td>1 jul</td><td>Correo</td><td class="num">6</td><td class="num">$111.606</td><td><span class="estado e-entregado">Entregado</span></td></tr><tr><td>PD-06664</td><td>11 jun</td><td>Mensajería</td><td class="num">8</td><td class="num">$148.808</td><td><span class="estado e-entregado">Entregado</span></td></tr><tr><td>PD-06663</td><td>26 may</td><td>Digital</td><td class="num">7</td><td class="num">$130.207</td><td><span class="estado e-entregado">Entregado</span></td></tr><tr><td>PD-06662</td><td>7 may</td><td>Digital</td><td class="num">8</td><td class="num">$148.808</td><td><span class="estado e-entregado">Entregado</span> <span class="tarde">tarde</span></td></tr></tbody>
+                        </table></div></article>
+                      </section>
+                    </div>
+                  </main>
+                </div>
+
+                <!-- ===== Consola · Despachos (DOM real; Minera Aconcagua entra y se mueve con la animación) ===== -->
+                <!-- ponytail: el resto del calendario queda como al lun 14; sólo cambian los elementos de Minera Aconcagua -->
+                <div class="app hf-app" id="app-desp">
+                  <aside class="side">
+                    <div class="marca"><div class="logo">MARLEY</div><span class="sub">Consola B2B · food service</span></div>
+                    <nav><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg><span>Resumen</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Hoy</span><em class="badge">7</em></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13"></path><path d="M9 21v-6h6v6"></path></svg><span>Locales</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"></path></svg><span>Conversaciones</span><em class="badge">3</em></a><span class="nav-grupo">Operación</span><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg><span>Pedidos</span></a><a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg><span>Despachos</span><em class="badge">1</em></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"></path></svg><span>Servicio técnico</span><em class="badge">2</em></a><span class="nav-grupo">Sistema</span><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"></path><circle cx="15" cy="6" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg><span>Reglas</span></a><a class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7V3M15 7V3"></path><path d="M6 7h12v4a6 6 0 0 1-12 0z"></path><path d="M12 17v4"></path></svg><span>Integraciones</span></a></nav>
+                    <div class="side-pie"><span class="sint">Datos sintéticos</span><p>Prototipo · Desafío Marley Coffee. Corte al lunes, 14 de septiembre.</p></div>
+                  </aside>
+                  <main class="main">
+                    <header class="top">
+                      <div><h1>Despachos</h1><p class="desc">Qué está por salir, qué va en ruta y qué agendaron los clientes</p></div>
+                      <div class="alcance"><button class="on">Piloto · 14 locales</button><button class="">Red completa · 2.410</button></div>
+                      <input class="buscar" placeholder="Buscar local, RUT o máquina" value="" />
+                    </header>
+                    <div class="hf-vista">
+                      <div class="intro"><p>Marley escribe primero: cuando se acerca la fecha de reparto o de mantención, el cliente elige día y franja según su disponibilidad. El día anterior recibe un recordatorio y puede confirmar, reagendar o cancelar, así la visita llega cuando hay alguien para recibirla.</p></div>
+                      <section class="franja">
+                        <article class="card"><h3>Por despachar</h3><div class="op-valor">2</div><div class="op-ref">programados por el cliente o confirmados</div></article>
+                        <article class="card"><h3>En ruta</h3><div class="op-valor">5</div><div class="op-ref"><b>1</b> con atraso</div></article>
+                        <article class="card" id="card-agenda"><h3>Agenda · próximos 14 días</h3><div class="op-valor"><span class="hf-tick"><span id="ag-o">4</span><span id="ag-n">5</span></span></div><div class="op-ref"><span class="hf-tick"><span id="agr-o">1 reparto · 3 mantenciones</span><span id="agr-n">2 repartos · 3 mantenciones</span></span></div></article>
+                        <article class="card"><h3>Cambios avisados</h3><div class="op-valor"><span class="hf-tick"><span id="ca-o">2</span><span id="ca-n">3</span></span></div><div class="op-ref">reagendados o cancelados antes de la visita</div></article>
+                      </section>
+                      <div class="tabs"><button class="on">Calendario<em>5</em></button><button class="">Por despachar<em>2</em></button><button class="">En ruta<em>5</em></button><button class="">Historial · 30 días<em>16</em></button></div>
+                      <div class="filtros"><div class="seg"><button class="on">Todo</button><button class="">🚚 Repartos</button><button class="">🔧 Mantenciones</button></div><span class="cuenta">1 aviso esperando respuesta</span></div>
+                      <div class="cal">
+                        <div class="cal-dia hoy"><h5>lun 14 · hoy</h5><a class="ag ag-ok"><b>🚚 Restobar Suecia</b><span>09:00–12:00 · Confirmado por el cliente</span></a></div>
+                        <div class="cal-dia"><h5>mar 15</h5><a class="ag ag-ruta"><b>🚚 Cafetería Los Leones</b><span>En ruta · pedido sin agenda</span></a><a class="ag ag-ruta"><b>🚚 Clínica Pacífico</b><span>En ruta · pedido sin agenda</span></a><a class="ag ag-ruta"><b>🚚 Inmobiliaria Atacama</b><span>En ruta · pedido sin agenda</span></a></div>
+                        <div class="cal-dia"><h5>mié 16</h5><a class="ag ag-ruta"><b>🚚 Bistró Italia</b><span>Por despachar · pedido sin agenda</span></a></div>
+                        <div class="cal-dia" id="cell-jue"><h5>jue 17</h5><a class="ag ag-ok"><b>🔧 Barista Manquehue</b><span>12:00–15:00 · Confirmado por el cliente</span></a><a class="ag ag-ok" id="chip-jue" style="position:relative;z-index:6"><b>🚚 Minera Aconcagua</b><span>12:00–15:00 · Confirmado por el cliente</span><i class="hf-re"><b>🚚 Minera Aconcagua</b><span>12:00–15:00 · ↻ Reagendado desde jue 17</span></i></a></div>
+                        <div class="cal-dia"><h5>vie 18</h5><a class="ag ag-pend"><b>🔧 Clínica Pacífico</b><span>09:00–12:00 · Esperando respuesta</span></a><a class="ag ag-can"><b>🚚 Holding Cordillera</b><span>09:00–12:00 · Cancelado · nuevo aviso vie 25</span></a></div>
+                        <div class="cal-dia" id="cell-lun"><h5>lun 21</h5><a class="ag ag-re"><b>🔧 Hotel Costanera</b><span>15:00–18:00 · ↻ Reagendado desde jue 17</span></a><a class="ag ag-re" id="chip-lun"><b>🚚 Minera Aconcagua</b><span>12:00–15:00 · ↻ Reagendado desde jue 17</span></a><a class="ag ag-ok" id="chip-inm"><b>🔧 Inmobiliaria Atacama</b><span>12:00–15:00 · Confirmado por el cliente</span></a></div>
+                        <div class="cal-dia"><h5>mar 22</h5><a class="ag ag-est"><b>🚚 Logística Austral</b><span>15:00–18:00 · Fecha estimada · aviso jue 17</span></a></div>
+                        <div class="cal-dia"><h5>mié 23</h5><span class="cal-nota">—</span></div>
+                        <div class="cal-dia"><h5>jue 24</h5><span class="cal-nota">—</span></div>
+                        <div class="cal-dia"><h5>vie 25</h5><span class="cal-nota">—</span></div>
+                      </div>
+                    </div>
+                  </main>
+                </div>
+
+                <!-- Capas de énfasis (en coordenadas de la consola, se mueven con el zoom) -->
+                <div class="hf-mark" id="mark-ag"></div>
+                <div class="hf-mark" id="mark-tl"></div>
+                <div class="hf-ring" id="ring-jue"></div>
+                <div class="hf-ring" id="ring-lun"></div>
+                <div class="hf-crip" id="crip"></div>
+                <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 11-6.5 1.2L16 21l-3 1.4-3.4-6.9L4 20z" fill="#FFFFFF" stroke="#1C1C1C" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              </div></div></div>
+              <!-- Etiquetas grandes (fuera del zoom, siempre legibles) -->
+              <div class="hf-pill" id="pill-a">Programado · jue 17 · 12:00–15:00</div>
+              <div class="hf-pill" id="pill-b">↻ Reagendado · lun 21 · 12:00–15:00</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ CIERRE ============ -->
+        <section id="outro" class="hf-scene">
+          <div>
+            <div class="hf-eyebrow">Consola Marley · prototipo</div>
+            <h1 class="hf-big"><span class="hf-line">Cada pedido</span><span class="hf-line">deja</span><span class="hf-line"><span class="hf-hl hf-tilde">una señal</span></span></h1>
+          </div>
+          <div class="hf-flow">
+            <div class="hf-fl"><b>01</b><strong>Mensaje</strong><span>El cliente agenda por WhatsApp</span></div>
+            <div class="hf-fl"><b>02</b><strong>Ficha</strong><span>El pedido queda en su local</span></div>
+            <div class="hf-fl"><b>03</b><strong>Calendario</strong><span>Coordinación lo ve y lo mide</span></div>
+          </div>
+          <div class="hf-url-final">alejog1302.github.io/marley-consola · datos sintéticos</div>
+        </section>
+
+        <!-- Riel de pasos y metadatos -->
+        <div class="hf-rail" id="rail">
+          <div class="hf-step"><span class="hf-n">01</span><span class="hf-l">Aviso</span><i class="hf-bar"><b></b></i></div>
+          <div class="hf-step"><span class="hf-n">02</span><span class="hf-l">Agenda</span><i class="hf-bar"><b></b></i></div>
+          <div class="hf-step"><span class="hf-n">03</span><span class="hf-l">Ficha</span><i class="hf-bar"><b></b></i></div>
+          <div class="hf-step"><span class="hf-n">04</span><span class="hf-l">Calendario</span><i class="hf-bar"><b></b></i></div>
+          <div class="hf-step"><span class="hf-n">05</span><span class="hf-l">Imprevisto</span><i class="hf-bar"><b></b></i></div>
+          <div class="hf-step"><span class="hf-n">06</span><span class="hf-l">Reagenda</span><i class="hf-bar"><b></b></i></div>
+        </div>
+        <div class="hf-meta" id="meta"><span>Minera Aconcagua · P-1152 · OCS · Santiago</span><span>Consola Marley · datos sintéticos</span></div>
+      </div>
+    </div>
+
+    <script>
+      /* ================================================================
+         LÍNEA DE TIEMPO · un solo timeline pausado, construido tras cargar fuentes.
+         Primero se MIDE todo (sin transformaciones aplicadas) y después se animan.
+         ================================================================ */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const q = (s) => document.querySelector(s);
+      const qa = (s) => [...document.querySelectorAll(s)];
+      const FIT = 0.75; // escala de la consola (1600 px) dentro de la ventana (1200 px)
+
+      async function build() {
+        await document.fonts.ready;
+
+        /* ---------- 1. MEDICIONES ---------- */
+        const vp = q('#vp').getBoundingClientRect();
+        const fr = q('#fit').getBoundingClientRect();
+        const union = (els) => {
+          const rs = els.map((e) => e.getBoundingClientRect());
+          const l = Math.min(...rs.map((r) => r.left)), t = Math.min(...rs.map((r) => r.top));
+          const r = Math.max(...rs.map((x) => x.right)), b = Math.max(...rs.map((x) => x.bottom));
+          return { l, t, w: r - l, h: b - t };
+        };
+        // Cámara: escala + contra-traslación para centrar un objetivo (sin salirse de la consola)
+        const cam = (els, want) => {
+          const r = union(els);
+          const S = Math.max(1, Math.min(want, (0.88 * vp.width) / r.w, (0.88 * vp.height) / r.h));
+          const hw = vp.width / (2 * S), hh = vp.height / (2 * S);
+          const cx = Math.min(Math.max(r.l + r.w / 2, fr.left + 236 * FIT + hw), fr.left + 1600 * FIT - hw); // 236 = barra lateral
+          const cy = Math.min(Math.max(r.t + r.h / 2, fr.top + hh), fr.top + 1400 * FIT - hh);
+          const vcx = vp.left + vp.width / 2, vcy = vp.top + vp.height / 2;
+          return { S, x: vcx - cx, y: vcy - cy, cx, cy, vcx, vcy };
+        };
+        // Coloca una capa de énfasis sobre elementos, en coordenadas de la consola
+        const placeFit = (sel, els, pad) => {
+          const r = union(els);
+          Object.assign(q(sel).style, {
+            left: (r.l - fr.left) / FIT - pad + 'px', top: (r.t - fr.top) / FIT - pad + 'px',
+            width: r.w / FIT + 2 * pad + 'px', height: r.h / FIT + 2 * pad + 'px',
+          });
+        };
+        // Coloca una etiqueta bajo un elemento, según dónde queda tras el zoom
+        const placePill = (sel, z, el) => {
+          const r = el.getBoundingClientRect(), p = q(sel);
+          const cx = z.vcx + z.S * (r.left + r.width / 2 - z.cx) - vp.left;
+          const by = z.vcy + z.S * (r.bottom - z.cy) - vp.top;
+          p.style.left = Math.min(Math.max(cx - p.offsetWidth / 2, 20), vp.width - p.offsetWidth - 20) + 'px';
+          p.style.top = Math.min(by + 14, vp.height - p.offsetHeight - 20) + 'px';
+        };
+
+        // Chat del teléfono: altura visible, posiciones de mensajes e indicadores "escribiendo"
+        const CH = q('#p-chat').clientHeight;
+        const bottomOf = (sel) => { const e = q(sel); return e.offsetTop + e.offsetHeight; };
+        [['#ty1', '#m3'], ['#ty2', '#m5'], ['#ty3', '#m8'], ['#ty4', '#m10']].forEach(([t, m]) => { q(t).style.top = q(m).offsetTop + 'px'; });
+        const TY_H = q('#ty1').offsetHeight;
+
+        // Consola
+        const Z1 = { S: 1, x: 0, y: 0 };
+        const liEls = qa('#tl-list > li'), trEls = qa('#tr-list > tr');
+        const LI_H = liEls[1].offsetTop - liEls[0].offsetTop;
+        const TR_H = trEls[1].offsetTop - trEls[0].offsetTop;
+        const chipJue = q('#chip-jue'), chipLun = q('#chip-lun'), chipInm = q('#chip-inm');
+        const LUN_H = chipInm.offsetTop - chipLun.offsetTop;
+        const jr = chipJue.getBoundingClientRect(), lr = chipLun.getBoundingClientRect();
+        const FLY_X = (lr.left - jr.left) / FIT, FLY_Y = (lr.top - jr.top) / FIT;
+        const zA = cam([q('#card-id')], 2.0);
+        const zA2 = cam([q('#tl-h3'), liEls[3]], 1.9);
+        const zB = cam([q('#cell-jue'), q('#card-agenda')], 1.9);
+        const zC = cam([q('#cell-jue'), q('#cell-lun')], 1.6);
+        placeFit('#mark-ag', [q('#ag-dt'), q('#ag-dd')], 8);
+        placeFit('#mark-tl', [liEls[0]], 4);
+        placeFit('#ring-jue', [chipJue], 4);
+        placeFit('#ring-lun', [chipLun], 4);
+        placePill('#pill-a', zB, chipJue);
+        placePill('#pill-b', zC, q('#cell-lun')); // bajo la celda, sin tapar otras visitas
+        const nav = union([q('#nav-desp')]);
+        const NAV_X = (nav.l + nav.w * 0.35 - fr.left) / FIT, NAV_Y = (nav.t + nav.h / 2 - fr.top) / FIT;
+        Object.assign(q('#crip').style, { left: NAV_X + 'px', top: NAV_Y + 'px' });
+        const CUR_X0 = 1000, CUR_Y0 = 560; // posición inicial del cursor (CSS)
+
+        /* ---------- 2. AYUDANTES DE ANIMACIÓN ---------- */
+        const capIn = (sel, t) => {
+          tl.fromTo(`${sel} .hf-eyebrow`, { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'power3.out' }, t);
+          tl.fromTo(`${sel} .hf-line`, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.55, ease: 'power4.out', stagger: 0.1 }, t + 0.1);
+          tl.fromTo(`${sel} .hf-p`, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, t + 0.45);
+          const extra = qa(`${sel} .hf-chip, ${sel} .hf-stat`);
+          if (extra.length) tl.fromTo(extra, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)', stagger: 0.08, transformOrigin: '0% 50%' }, t + 0.65);
+        };
+        const swap = (oldSel, newSel, t) => {
+          tl.fromTo(oldSel, { yPercent: 0, opacity: 1 }, { yPercent: -100, opacity: 0, duration: 0.35, ease: 'power2.in', immediateRender: false }, t);
+          tl.fromTo(newSel, { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, t + 0.2);
+        };
+        let listY = 0;
+        const scroll = (bottom, t) => {
+          const y = Math.min(0, CH - 36 - bottom);
+          if (y === listY) return;
+          tl.fromTo('#p-list', { y: listY }, { y, duration: 0.45, ease: 'power2.out', immediateRender: false }, t);
+          listY = y;
+        };
+        const msg = (sel, t, origin) => {
+          scroll(bottomOf(sel), t);
+          tl.fromTo(sel, { opacity: 0, scale: 0.86, y: 20, transformOrigin: origin }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'back.out(1.7)' }, t);
+        };
+        const typing = (sel, t0, t1) => {
+          scroll(q(sel).offsetTop + TY_H, t0);
+          tl.fromTo(sel, { opacity: 0, scale: 0.8, transformOrigin: '0% 100%' }, { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2)' }, t0);
+          tl.fromTo(`${sel} i`, { y: 0 }, { y: -9, duration: 0.2, ease: 'sine.inOut', yoyo: true, repeat: 1, stagger: 0.1, immediateRender: false }, t0 + 0.15);
+          tl.fromTo(sel, { opacity: 1 }, { opacity: 0, duration: 0.08, immediateRender: false }, t1 - 0.1); // se va antes de que entre el mensaje
+        };
+        let zCur = Z1;
+        const zoom = (z, t, d, ease = 'power3.inOut') => {
+          tl.fromTo('#zo', { scale: zCur.S }, { scale: z.S, duration: d, ease, immediateRender: false }, t);
+          tl.fromTo('#zi', { x: zCur.x, y: zCur.y }, { x: z.x, y: z.y, duration: d, ease, immediateRender: false }, t);
+          zCur = z;
+        };
+        const steps = qa('.hf-step');
+        const step = (i, t) => {
+          tl.fromTo(steps[i].querySelector('.hf-bar b'), { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, t);
+          tl.fromTo(steps[i].querySelectorAll('.hf-n, .hf-l'), { color: 'rgba(247,245,240,0.42)' }, { color: '#F7BE00', duration: 0.3, immediateRender: false }, t);
+          if (i > 0) tl.fromTo(steps[i - 1].querySelectorAll('.hf-n, .hf-l'), { color: '#F7BE00' }, { color: '#F7F5F0', duration: 0.3, immediateRender: false }, t);
+        };
+
+        /* ---------- 3. AMBIENTE (repeticiones finitas dentro de los 46,5 s) ---------- */
+        tl.fromTo('.hf-glow', { scale: 1 }, { scale: 1.14, duration: 4, yoyo: true, repeat: 10, ease: 'sine.inOut' }, 0);
+        tl.fromTo('.hf-glow2', { scale: 1.1 }, { scale: 0.95, duration: 5, yoyo: true, repeat: 8, ease: 'sine.inOut' }, 0);
+        tl.fromTo('.hf-ghost', { x: 0 }, { x: -260, duration: 46.5, ease: 'none' }, 0);
+        tl.fromTo('.hf-reg', { opacity: 0.35 }, { opacity: 0.9, duration: 1.5, yoyo: true, repeat: 29, ease: 'sine.inOut' }, 0);
+        tl.fromTo('.hf-float', { y: -6 }, { y: 6, duration: 2.4, yoyo: true, repeat: 18, ease: 'sine.inOut' }, 0);
+
+        /* ---------- 4. INTRO (0 – 3,6 s) ---------- */
+        tl.fromTo('#intro .hf-eyebrow', { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 0.2);
+        tl.fromTo('#intro .hf-line', { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power4.out', stagger: 0.12 }, 0.35);
+        tl.fromTo('#intro .hf-sub', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, 1.0);
+        tl.fromTo('#notif', { x: 120, opacity: 0, rotation: 3 }, { x: 0, opacity: 1, rotation: 0, duration: 0.7, ease: 'back.out(1.5)' }, 1.3);
+
+        // Transición: empuje vertical hacia el teléfono
+        const T1 = 3.6;
+        tl.fromTo('#intro', { yPercent: 0 }, { yPercent: -100, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T1);
+        tl.fromTo('#pscene', { yPercent: 100 }, { yPercent: 0, duration: 0.7, ease: 'power3.inOut' }, T1);
+        tl.fromTo('.hf-phone', { rotation: -5 }, { rotation: 0, duration: 1.1, ease: 'back.out(1.6)' }, T1 + 0.1);
+        tl.fromTo(['#rail', '#meta'], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, T1 + 0.35);
+
+        /* ---------- 5. TELÉFONO · aviso y agenda (3,6 – 13,2 s) ---------- */
+        step(0, 4.2);
+        capIn('#cap-a', 4.3);
+        msg('#m0', 4.5, '50% 50%');
+        msg('#m1', 4.9, '0% 100%');
+        step(1, 7.0);
+        msg('#m2', 7.0, '100% 100%');
+        typing('#ty1', 7.5, 8.1);
+        msg('#m3', 8.1, '0% 100%');
+        msg('#m4', 9.2, '100% 100%');
+        typing('#ty2', 9.7, 10.3);
+        msg('#m5', 10.3, '0% 100%');
+
+        /* ---------- 6. CONSOLA · ficha (13,2 – 22,6 s) ---------- */
+        const T2 = 13.2;
+        tl.fromTo('#pscene', { x: 0 }, { x: -1920, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T2);
+        tl.fromTo('#cscene', { x: 1920 }, { x: 0, duration: 0.7, ease: 'power3.inOut' }, T2);
+        tl.fromTo('.hf-win', { rotation: 2.5, scale: 0.94 }, { rotation: 0, scale: 1, duration: 1, ease: 'back.out(1.4)' }, T2 + 0.2);
+        tl.set('#cap-a', { opacity: 0 }, 20);
+        step(2, 13.6);
+        capIn('#cc-a', 13.8);
+        zoom(zA, 14.6, 1.3);
+        tl.fromTo('#mark-ag', { scaleX: 0, opacity: 1, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.45, ease: 'power3.out' }, 16.2);
+        swap('#ag-old', '#ag-new', 16.4);
+        swap('#up-old', '#up-new', 17.0);
+        zoom(zA2, 18.2, 1.1);
+        tl.fromTo(liEls.slice(1), { y: -LI_H }, { y: 0, duration: 0.55, ease: 'power3.out' }, 19.5);
+        tl.fromTo(liEls[0], { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 19.65);
+        tl.fromTo(trEls.slice(1), { y: -TR_H }, { y: 0, duration: 0.55, ease: 'power3.out' }, 19.5);
+        tl.fromTo(trEls[0], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 19.65);
+        tl.fromTo('#mark-tl', { scaleX: 0, opacity: 1, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.45, ease: 'power3.out' }, 19.8);
+        tl.fromTo(['#mark-ag', '#mark-tl'], { opacity: 1 }, { opacity: 0, duration: 0.4, immediateRender: false }, 20.9);
+        zoom(Z1, 21.0, 1.0);
+        // Cursor: va a "Despachos" y hace clic
+        tl.fromTo('#cursor', { opacity: 0, scale: 0.6, transformOrigin: '0% 0%' }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' }, 21.5);
+        tl.fromTo('#cursor', { x: 0, y: 0 }, { x: NAV_X - CUR_X0, y: NAV_Y - CUR_Y0, duration: 0.75, ease: 'power3.inOut' }, 21.7);
+        tl.fromTo('#cursor', { scale: 1 }, { scale: 0.82, duration: 0.09, yoyo: true, repeat: 1, ease: 'power2.in', immediateRender: false }, 22.5);
+        tl.fromTo('#crip', { scale: 0, opacity: 1 }, { scale: 3, opacity: 0, duration: 0.6, ease: 'power2.out', immediateRender: false }, 22.52);
+        tl.fromTo('#cursor', { opacity: 1 }, { opacity: 0, duration: 0.25, immediateRender: false }, 23.1);
+
+        /* ---------- 7. CONSOLA · calendario (22,6 – 28,6 s) ---------- */
+        tl.fromTo('#app-desp', { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power1.inOut' }, 22.65);
+        tl.fromTo('#url-desp', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 22.65);
+        tl.fromTo('#url-ficha', { opacity: 1 }, { opacity: 0, duration: 0.3, immediateRender: false }, 22.65);
+        step(3, 22.6);
+        tl.fromTo('#cc-a', { opacity: 1, y: 0 }, { opacity: 0, y: -30, duration: 0.3, ease: 'power2.in', immediateRender: false }, 22.6);
+        capIn('#cc-b', 22.85);
+        zoom(zB, 23.5, 1.2);
+        tl.fromTo('#chip-jue', { opacity: 0, scale: 0.5, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.55, ease: 'back.out(2.2)' }, 25.0);
+        tl.fromTo('#ring-jue', { opacity: 1, scale: 0.92 }, { opacity: 0, scale: 1.3, duration: 0.8, ease: 'power2.out', immediateRender: false }, 25.1);
+        swap('#ag-o', '#ag-n', 25.3);
+        swap('#agr-o', '#agr-n', 25.4);
+        swap('#st1-o', '#st1-n', 25.3);
+        tl.fromTo('#pill-a', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.8)', immediateRender: false }, 25.6);
+
+        /* ---------- 8. TELÉFONO · imprevisto (28,6 – 36,3 s) ---------- */
+        const T3 = 28.6;
+        tl.fromTo('#cscene', { x: 0 }, { x: 1920, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T3);
+        tl.fromTo('#pscene', { x: -1920 }, { x: 0, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T3);
+        step(4, 28.9);
+        tl.set(['#cc-b', '#pill-a'], { opacity: 0 }, 29.3);
+        zoom(zC, 29.4, 0.05); // la cámara se reubica mientras la consola está fuera de cuadro
+        capIn('#cap-b', 29.2);
+        msg('#m6', 29.5, '50% 50%');
+        msg('#m7', 30.0, '100% 100%');
+        typing('#ty3', 30.8, 31.4);
+        msg('#m8', 31.4, '0% 100%');
+        msg('#m9', 32.9, '100% 100%'); // el cliente dice cuándo puede
+        typing('#ty4', 33.5, 34.1);
+        msg('#m10', 34.1, '0% 100%');
+
+        /* ---------- 9. CONSOLA · reagenda (36,3 – 41,7 s) ---------- */
+        const T4 = 36.3;
+        tl.fromTo('#pscene', { x: 0 }, { x: -1920, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T4);
+        tl.fromTo('#cscene', { x: 1920 }, { x: 0, duration: 0.7, ease: 'power3.inOut', immediateRender: false }, T4);
+        step(5, T4 + 0.2);
+        capIn('#cc-c', T4 + 0.6);
+        tl.fromTo('#chip-jue', { scale: 1, boxShadow: '0 0 0 rgba(0,0,0,0)' }, { scale: 1.08, boxShadow: '0 14px 24px rgba(0,0,0,0.22)', duration: 0.3, ease: 'power2.out', immediateRender: false }, T4 + 1.1);
+        tl.fromTo('#chip-jue', { x: 0, y: 0 }, { x: FLY_X, y: FLY_Y, duration: 1.1, ease: 'power3.inOut', immediateRender: false }, T4 + 1.4);
+        tl.fromTo('#chip-jue .hf-re', { opacity: 0 }, { opacity: 1, duration: 0.15, ease: 'none' }, T4 + 1.45); // cambia a "reagendado" al despegar
+        tl.fromTo(chipInm, { y: -LUN_H }, { y: 0, duration: 0.5, ease: 'power3.out' }, T4 + 1.9);
+        tl.fromTo('#chip-jue', { scale: 1.08 }, { scale: 1, duration: 0.3, ease: 'power2.in', immediateRender: false }, T4 + 2.2);
+        tl.fromTo(chipLun, { opacity: 0 }, { opacity: 1, duration: 0.01 }, T4 + 2.5);
+        tl.fromTo('#chip-jue', { opacity: 1 }, { opacity: 0, duration: 0.01, immediateRender: false }, T4 + 2.51);
+        tl.fromTo('#ring-lun', { opacity: 1, scale: 0.92 }, { opacity: 0, scale: 1.3, duration: 0.8, ease: 'power2.out', immediateRender: false }, T4 + 2.55);
+        swap('#ca-o', '#ca-n', T4 + 2.7);
+        swap('#st2-o', '#st2-n', T4 + 2.7);
+        tl.fromTo('#pill-b', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.8)', immediateRender: false }, T4 + 2.9);
+
+        /* ---------- 10. CIERRE (41,7 – 46,5 s) ---------- */
+        const T5 = 41.7;
+        tl.fromTo('#cscene', { opacity: 1, filter: 'blur(0px)' }, { opacity: 0, filter: 'blur(14px)', duration: 0.7, ease: 'power2.inOut', immediateRender: false }, T5);
+        tl.fromTo(['#rail', '#meta'], { opacity: 1 }, { opacity: 0, duration: 0.5, immediateRender: false }, T5);
+        tl.fromTo('#outro', { opacity: 0, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power2.inOut' }, T5);
+        tl.fromTo('#outro .hf-eyebrow', { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'power3.out' }, T5 + 0.3);
+        tl.fromTo('#outro .hf-line', { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power4.out', stagger: 0.12 }, T5 + 0.4);
+        tl.fromTo('.hf-fl', { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.15 }, T5 + 0.9);
+        tl.fromTo('.hf-url-final', { opacity: 0 }, { opacity: 1, duration: 0.5 }, T5 + 1.5);
+        tl.fromTo('#outro', { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'power2.in', immediateRender: false }, 45.8);
+
+        // Registrar el timeline al final, cuando ya está completo
+        window.__timelines['main'] = tl;
+      }
+      build();
+    </script>
+  </body>
+</html>

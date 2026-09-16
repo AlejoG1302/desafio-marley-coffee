@@ -1,0 +1,7 @@
+# capturas y temporales de los scripts
+herramientas/deck4/
+__pycache__/
+~$*
+*.bak
+05-video-demo-hyperframes/snapshots/
+05-video-demo-hyperframes/node_modules/

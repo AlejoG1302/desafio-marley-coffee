@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Omnicanal · Marley Coffee — Pauta de revisión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* === PALETA · VINTAGE EDITORIAL === */
+:root{
+  --cream:#f5f3ee;
+  --cream-deep:#ece8df;
+  --ink:#1a1a1a;
+  --ink-soft:#555;
+  --ink-faint:#8a8478;
+  --warm:#e8d4c0;
+  --terra:#a8482a;      /* acento principal — alertas y números */
+  --olive:#5b6446;      /* acento secundario — confirmado / positivo */
+  --rule:#d8d2c6;
+  --title:clamp(1.9rem,4.6vw,3.4rem);
+  --h2:clamp(1.2rem,2.6vw,1.85rem);
+  --h3:clamp(.95rem,1.6vw,1.15rem);
+  --body:clamp(.85rem,1.15vw,1rem);
+  --small:clamp(.7rem,.92vw,.82rem);
+  --pad:clamp(1.1rem,4vw,3.4rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  font-size:var(--body);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* === NAV FIJA === */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(245,243,238,.93);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;gap:clamp(.5rem,2vw,1.6rem);
+  padding:.55rem var(--pad);
+  font-size:var(--small);
+  flex-wrap:wrap;
+}
+nav .tag{font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--terra)}
+nav a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px;transition:.2s}
+nav a:hover{color:var(--ink);border-color:var(--terra)}
+nav .spacer{flex:1}
+nav .date{color:var(--ink-faint)}
+
+/* === SECCIONES === */
+section{padding:clamp(2rem,5vw,3.6rem) var(--pad);border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:none}
+.sec-head{display:flex;align-items:baseline;gap:.9rem;margin-bottom:clamp(1.2rem,2.5vw,2rem)}
+.sec-num{
+  font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(1.6rem,3.4vw,2.6rem);color:var(--warm);line-height:1;
+}
+.sec-title{font-family:'Fraunces',serif;font-weight:700;font-size:var(--h2);letter-spacing:-.01em}
+.sec-kicker{font-size:var(--small);color:var(--ink-faint);margin-top:.15rem}
+
+/* === HERO === */
+.hero{background:var(--cream-deep);border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-size:var(--small);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+}
+.shape{display:inline-flex;align-items:center;gap:.4rem}
+.shape .circ{width:9px;height:9px;border:1.5px solid var(--terra);border-radius:50%}
+.shape .line{width:26px;height:1.5px;background:var(--terra)}
+.shape .dot{width:5px;height:5px;background:var(--terra);border-radius:50%}
+h1{
+  font-family:'Fraunces',serif;font-weight:900;font-size:var(--title);
+  line-height:1.06;letter-spacing:-.025em;max-width:19ch;
+}
+h1 em{font-style:italic;color:var(--terra)}
+.hero-sub{
+  margin-top:1rem;max-width:62ch;color:var(--ink-soft);
+  font-size:clamp(.9rem,1.3vw,1.08rem);line-height:1.6;
+}
+.hero-meta{
+  margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--rule);
+  display:flex;gap:clamp(1rem,3vw,2.6rem);flex-wrap:wrap;font-size:var(--small);color:var(--ink-faint);
+}
+.hero-meta b{display:block;color:var(--ink);font-weight:600;font-size:var(--body)}
+
+/* === STAT TILES === */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,148px),1fr));gap:.7rem;margin:1.4rem 0}
+.stat{background:var(--cream);border:1px solid var(--rule);border-left:3px solid var(--terra);padding:.85rem .95rem}
+.stat.olive{border-left-color:var(--olive)}
+.stat .n{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.35rem,2.9vw,2.1rem);line-height:1;color:var(--terra)}
+.stat.olive .n{color:var(--olive)}
+.stat .l{font-size:var(--small);color:var(--ink-soft);margin-top:.35rem;line-height:1.35}
+
+/* === TABLA === */
+.tbl-wrap{overflow-x:auto;margin:1rem 0;border:1px solid var(--rule);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:var(--small);min-width:640px}
+th,td{padding:.5rem .65rem;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{
+  background:var(--ink);color:var(--cream);font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;font-size:calc(var(--small) * .92);
+  position:sticky;top:0;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#fbfaf7}
+td.ch{font-family:'Fraunces',serif;font-weight:700;font-size:var(--body)}
+.bad{color:var(--terra);font-weight:700}
+.good{color:var(--olive);font-weight:700}
+.pat{font-weight:700;font-size:calc(var(--small) * .97)}
+
+/* === CALLOUT === */
+.callout{
+  background:#fff;border:2px solid var(--ink);padding:clamp(.95rem,2.2vw,1.5rem);
+  margin:1.2rem 0;position:relative;
+}
+.callout.terra{border-color:var(--terra);background:#fdf7f4}
+.callout .badge{
+  position:absolute;top:-.62rem;left:1rem;background:var(--ink);color:var(--cream);
+  font-size:calc(var(--small)*.88);letter-spacing:.12em;text-transform:uppercase;
+  padding:.14rem .6rem;font-weight:600;
+}
+.callout.terra .badge{background:var(--terra)}
+.callout h4{font-family:'Fraunces',serif;font-weight:700;font-size:var(--h3);margin:.3rem 0 .5rem}
+.callout p{color:var(--ink-soft);max-width:78ch}
+.callout p + p{margin-top:.55rem}
+.callout strong{color:var(--ink)}
+
+/* === CADENA DE FRICCIONES === */
+.chain{display:grid;gap:.55rem;margin:1rem 0}
+.chain-root{
+  background:var(--ink);color:var(--cream);padding:.7rem .9rem;
+  font-family:'Fraunces',serif;font-weight:700;font-size:var(--h3);
+}
+.chain-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:.55rem}
+.chain-item{background:#fff;border:1px solid var(--rule);padding:.6rem .75rem;font-size:var(--small)}
+.chain-item b{display:block;font-family:'Fraunces',serif;font-size:var(--body);margin-bottom:.15rem}
+.chain-end{background:var(--warm);border:1px solid var(--terra);padding:.7rem .9rem;font-weight:600;text-align:center;font-size:var(--body)}
+
+/* === LISTA DE PUNTOS === */
+.points{display:grid;gap:.7rem;margin-top:.5rem}
+.point{display:grid;grid-template-columns:auto 1fr;gap:.85rem;align-items:start;background:#fff;border:1px solid var(--rule);padding:.8rem .95rem}
+.point .idx{
+  font-family:'Fraunces',serif;font-weight:900;font-size:var(--h3);
+  color:var(--cream);background:var(--ink);width:1.85em;height:1.85em;
+  display:grid;place-items:center;flex-shrink:0;
+}
+.point.hot .idx{background:var(--terra)}
+.point h5{font-family:'Fraunces',serif;font-weight:700;font-size:var(--h3);margin-bottom:.2rem}
+.point p{color:var(--ink-soft);font-size:var(--small);max-width:82ch}
+.point .ask{
+  display:block;margin-top:.45rem;padding-left:.7rem;border-left:2px solid var(--warm);
+  font-style:italic;color:var(--ink);font-size:var(--small);
+}
+.point .ask::before{content:"Preguntar al revisor — ";font-style:normal;font-weight:600;color:var(--terra);letter-spacing:.02em}
+
+/* === 2 COLUMNAS === */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:1.1rem}
+.panel{background:#fff;border:1px solid var(--rule);padding:.95rem 1.05rem}
+.panel h4{font-family:'Fraunces',serif;font-weight:700;font-size:var(--h3);margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule)}
+.panel ul{list-style:none;display:grid;gap:.42rem}
+.panel li{font-size:var(--small);color:var(--ink-soft);padding-left:1.05rem;position:relative;line-height:1.45}
+.panel li::before{content:"";position:absolute;left:0;top:.52em;width:5px;height:5px;background:var(--terra);border-radius:50%}
+.panel li.ok::before{background:var(--olive)}
+.panel li b{color:var(--ink)}
+
+/* === FOOT === */
+footer{padding:1.4rem var(--pad) 2.4rem;font-size:var(--small);color:var(--ink-faint);background:var(--cream-deep);border-top:1px solid var(--rule)}
+footer b{color:var(--ink-soft)}
+
+/* === REVEAL === */
+.reveal{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.14s}.d3{animation-delay:.22s}.d4{animation-delay:.3s}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  nav{position:static}
+  section{break-inside:avoid;border-bottom:1px solid #ccc}
+  .reveal{opacity:1;transform:none;animation:none}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="tag">Marley Coffee</span>
+  <a href="#s1">1 · Diagnóstico</a>
+  <a href="#s2">2 · Hallazgos</a>
+  <a href="#s3">3 · Qué comentar</a>
+  <span class="spacer"></span>
+  <span class="date">Taller Aplicado de Marketing III · 17 ago 2026</span>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="eyebrow reveal">
+    <span class="shape"><span class="circ"></span><span class="line"></span><span class="dot"></span></span>
+    <span>Entregable 1 de 13 · Pauta para la primera revisión</span>
+  </div>
+  <h1 class="reveal d1">Marley Coffee no tiene un problema de café: tiene <em>3.390 puntos que no puede ver</em>.</h1>
+  <p class="hero-sub reveal d2">
+    Sin identidad única de punto, su experiencia se gestiona <strong>por reclamo</strong> y no por diseño,
+    su reposición <strong>por memoria</strong> y no por dato, y su crecimiento <strong>por esfuerzo comercial</strong>
+    y no por sistema — de modo que el mal momento de un canal se paga en todos los demás, y nadie se entera.
+  </p>
+  <div class="hero-meta reveal d3">
+    <div><b>4 canales</b>Horeca · OCS · Estaciones · Panaderías</div>
+    <div><b>63%</b>de las ventas de Marley en Chile</div>
+    <div><b>$220 M</b>presupuesto 12 meses, sin IVA</div>
+    <div><b>1 dic 2026</b>entra en vigencia la Ley 21.719</div>
+  </div>
+</section>
+
+<!-- ============ 1 · DIAGNÓSTICO ============ -->
+<section id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div>
+      <div class="sec-title">El diagnóstico en una vista</div>
+      <div class="sec-kicker">Cuatro canales, cuatro patologías distintas. No es un problema repetido cuatro veces.</div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>Canal</th><th>% ventas</th><th>Puntos</th><th>NPS</th><th>Retención</th>
+          <th>Señal de alarma</th><th>Control de Marley</th><th>Patología dominante</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ch">Horeca</td><td>36%</td><td>1.150</td><td class="good">46</td><td>86%</td>
+          <td><span class="bad">82%</span> de reposiciones manuales</td><td class="good">Alto</td>
+          <td class="pat">No escala</td>
+        </tr>
+        <tr>
+          <td class="ch">OCS</td><td>12%</td><td>1.260</td><td class="bad">38</td><td class="good">90%</td>
+          <td>6,8% quiebres/mes · 31 h de respuesta</td><td>Mixto (75/25)</td>
+          <td class="pat">Retención frágil</td>
+        </tr>
+        <tr>
+          <td class="ch">Estaciones</td><td>9%</td><td>360</td><td class="bad">34</td><td>n/d</td>
+          <td>Disponibilidad <span class="bad">91%</span> · 45% sin dato</td><td class="bad">Bajo</td>
+          <td class="pat">Riesgo de marca</td>
+        </tr>
+        <tr>
+          <td class="ch">Panaderías</td><td>6%</td><td>620</td><td>39</td><td>n/d</td>
+          <td>Cumplimiento de estándar <span class="bad">76%</span></td><td>Medio-bajo</td>
+          <td class="pat">Calidad no gobernada</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="stats reveal d1">
+    <div class="stat"><div class="n">26%</div><div class="l">de las cuentas B2B es plenamente analizable hoy<br><span style="color:var(--ink-faint)">(0,65 CRM × 0,40 completitud)</span></div></div>
+    <div class="stat"><div class="n">943</div><div class="l">pedidos Horeca tramitados a mano cada mes</div></div>
+    <div class="stat"><div class="n">86</div><div class="l">puntos OCS con quiebre de stock cada mes</div></div>
+    <div class="stat"><div class="n">162</div><div class="l">puntos de estaciones sin dato de venta</div></div>
+    <div class="stat"><div class="n">149</div><div class="l">panaderías bajo el estándar de preparación</div></div>
+    <div class="stat olive"><div class="n">38%</div><div class="l">de los puntos está detrás de un tercero</div></div>
+  </div>
+
+  <div class="callout reveal d2">
+    <span class="badge">La causa raíz</span>
+    <h4>Seis fricciones transversales, una sola causa</h4>
+    <div class="chain">
+      <div class="chain-root">F1 · Ceguera de punto — no existe identificador único de cliente ni de punto</div>
+      <div class="chain-row">
+        <div class="chain-item"><b>F2</b> Reposición reactiva: nadie sabe cuándo se acaba el café antes de que se acabe</div>
+        <div class="chain-item"><b>F3</b> Calidad de preparación sin gobierno: la taza la hace un tercero</div>
+        <div class="chain-item"><b>F4</b> Servicio técnico desacoplado del CRM y de ventas</div>
+        <div class="chain-item"><b>F6</b> El tercero como muro: intermedia experiencia <em>y</em> dato</div>
+      </div>
+      <div class="chain-item" style="border-color:var(--terra)"><b>F5</b> Voz del cliente inexistente — encuestas esporádicas, sin NPS/CSAT/CES unificado</div>
+      <div class="chain-end">No se puede saber si algo de esto mejora</div>
+    </div>
+    <p><strong>Consecuencia metodológica:</strong> no se puede medir una experiencia omnicanal sobre una red cuyos puntos no tienen identidad. Cualquier marco de medición que no empiece por resolver F1 es voluntarista. <strong>El primer movimiento no es una campaña: es un maestro único de puntos.</strong></p>
+  </div>
+
+  <div class="cols reveal d3">
+    <div class="panel">
+      <h4>El halo — tres flujos, ninguno observable hoy</h4>
+      <ul>
+        <li><b>A · Consumidor → B2B.</b> Quien toma Marley a diario en su oficina decide después en su cafetería o panadería. Sin QR, sin código, sin la pregunta "¿dónde lo probó por primera vez?"</li>
+        <li><b>B · B2B → B2B.</b> Los decisores de un canal se conocen entre sí. No existe programa de referidos.</li>
+        <li><b>C · Contaminación negativa.</b> Es el flujo que <b>sí</b> opera hoy, y sin control: una máquina sucia en una estación daña la marca en todos los demás canales.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h4>Rol de cada canal en el sistema</h4>
+      <ul>
+        <li class="ok"><b>OCS — puerta de entrada.</b> Prueba diaria, cautiva, gratuita. Alimenta a los otros tres.</li>
+        <li class="ok"><b>Estaciones — alcance y recuerdo.</b> Máximo tráfico, mínimo control. Alimenta <em>y</em> contamina.</li>
+        <li class="ok"><b>Panaderías — refuerzo de hábito.</b> Frecuencia diaria de barrio.</li>
+        <li class="ok"><b>Horeca — donde la marca se elige.</b> Recibe de los otros tres.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · HALLAZGOS ============ -->
+<section id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div>
+      <div class="sec-title">Los cuatro hallazgos propios</div>
+      <div class="sec-kicker">No están en el brief. Son el trabajo del equipo, y son lo que hay que defender.</div>
+    </div>
+  </div>
+
+  <div class="callout terra reveal">
+    <span class="badge">Hallazgo 1</span>
+    <h4>La retención de OCS es un pasivo, no un activo</h4>
+    <p>OCS tiene <strong>la retención más alta de los cuatro canales (90%) y el segundo NPS más bajo (38)</strong>. Horeca, misma empresa y mismo producto, tiene <strong>más</strong> satisfacción (46) y <strong>menos</strong> retención (86%). Esa inversión de orden es la anomalía.</p>
+    <p>La explicación estructural: <strong>en OCS el decisor no es el usuario</strong>. Facilities firma; el colaborador toma el café. Quien sufre la mala experiencia no puede cambiar de proveedor, y quien puede cambiarlo no la sufre. El circuito de feedback está cortado. <strong>El 90% no mide un buen servicio: mide un costo de cambio.</strong></p>
+    <p>Y ese colchón no lo controla Marley — lo controla el competidor que decida pagarlo. <strong>Nestlé tiene 60–70% del canal y el costo del grano le está bajando igual que a Marley.</strong> Si Marley pierde 10% de su base OCS, Nestlé sube 1,5 pp (irrelevante para ellos) y Marley cae 10% relativo. El ataque le cuesta poco al líder y mucho al desafiante.</p>
+    <div class="stats" style="margin-bottom:0">
+      <div class="stat"><div class="n">+126</div><div class="l">puntos perdidos al año si la retención cae a 80%</div></div>
+      <div class="stat"><div class="n">16%</div><div class="l">de la meta de +12% se la come una caída de 10 pp</div></div>
+      <div class="stat"><div class="n">25%</div><div class="l">del canal es invisible: XYZ SPA reporta mensual agregado</div></div>
+    </div>
+  </div>
+
+  <div class="callout reveal d1">
+    <span class="badge">Hallazgo 2</span>
+    <h4>La meta de NPS 42 → 52 es una trampa aritmética</h4>
+    <p>El brief da una base de 42 sin decir cómo se pondera. Probamos las cuatro opciones: promedio simple <strong>39,2</strong> · por puntos <strong>40,5</strong> · por máquinas <strong>40,4</strong> · <strong>por participación de ventas 42,1</strong>. Es por ventas.</p>
+    <p>Entonces <strong>Horeca concentra el 57% del peso de la métrica</strong> y llegar a 52 es, aritméticamente, una meta de Horeca + OCS (76% del peso combinado). Subir estaciones de 34 a 52 mueve el ponderado solo <strong>+2,6 puntos</strong>.</p>
+    <p><strong>La contradicción a resolver:</strong> la métrica premia invertir donde la marca no está en riesgo, y la urgencia competitiva está donde la métrica no pesa. O se mantiene la ponderación asumiendo que estaciones queda subrepresentado, o se propone una ponderación por exposición de marca, con justificación.</p>
+  </div>
+
+  <div class="cols reveal d2">
+    <div class="callout" style="margin:0">
+      <span class="badge">Hallazgo 3</span>
+      <h4>El precio del café abrió una ventana — y una carrera</h4>
+      <p>El arábica está en <strong>321,45 ¢/lb</strong> (17-08-2026), <strong>bajando</strong> desde el récord de 437,95 de fines de 2025, por la cosecha récord de Brasil (+15,5%).</p>
+      <p>La normalización del costo puede <strong>financiar parte de los $220 M sin tocar el precio al cliente</strong>. Pero es simétrica: el costo también le baja a Nestlé. <strong>No es una ventaja, es una carrera.</strong></p>
+    </div>
+    <div class="callout" style="margin:0">
+      <span class="badge">Hallazgo 4</span>
+      <h4>No capacitar: rediseñar</h4>
+      <p>Nescafé Alegria está construido explícitamente <em>para entornos sin operador capacitado</em>. El líder del mercado ya concluyó que capacitar personal de terceros con alta rotación no escala.</p>
+      <p>Por lo tanto, la solución al <strong>76% de cumplimiento en panaderías no debería ser un programa de capacitación</strong>, sino un rediseño que haga difícil preparar mal la taza.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · QUÉ COMENTAR ============ -->
+<section id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div>
+      <div class="sec-title">Qué llevar al revisor</div>
+      <div class="sec-kicker">Seis puntos donde necesitamos criterio, y las tres objeciones que tenemos preparadas.</div>
+    </div>
+  </div>
+
+  <div class="points reveal">
+    <div class="point hot">
+      <span class="idx">1</span>
+      <div>
+        <h5>¿La frase aguanta?</h5>
+        <p>El criterio #2 de la comisión dice que si no se resume en una frase, no está lista. La nuestra apunta a la ceguera de datos como causa raíz, no al café ni a la marca.</p>
+        <span class="ask">¿suena a proyecto de TI en vez de a desafío de marketing y experiencia? ¿Cómo lo bajamos a lenguaje de negocio sin perder la causa raíz?</span>
+      </div>
+    </div>
+    <div class="point hot">
+      <span class="idx">2</span>
+      <div>
+        <h5>La ponderación del NPS y la contradicción que abre</h5>
+        <p>Reconstruimos que la base 42 se pondera por ventas. Eso hace que la meta sea de Horeca + OCS, mientras la urgencia competitiva está en estaciones y panaderías.</p>
+        <span class="ask">¿confirmamos la ponderación con el diseñador del desafío, o la dejamos declarada como supuesto propio? ¿Es válido proponer una ponderación alternativa?</span>
+      </div>
+    </div>
+    <div class="point">
+      <span class="idx">3</span>
+      <div>
+        <h5>Priorización: ¿dónde ponemos los $220 M?</h5>
+        <p>62% de los puntos es de control alto (ejecutable sin permiso de nadie) y 38% está detrás de un tercero. Nuestra lectura: atacar primero el cuadrante de control alto, y negociar el resto con contrapartida de valor.</p>
+        <span class="ask">¿la empresa esperaría ver iniciativas en los cuatro canales, aunque en dos de ellos dependan de una negociación que puede no darse?</span>
+      </div>
+    </div>
+    <div class="point">
+      <span class="idx">4</span>
+      <div>
+        <h5>Alcance de la investigación primaria</h5>
+        <p>Tenemos siete hipótesis con método de verificación. Las más baratas: reseñas de Google como proxy de experiencia, cronometrar la respuesta al formulario B2B propio y al de Nespresso Pro, y mystery shopping en 8 puntos.</p>
+        <span class="ask">¿hay acceso a algún contacto real de Marley para validar H1 (retención contractual vs. satisfacción), o trabajamos solo con supuestos declarados?</span>
+      </div>
+    </div>
+    <div class="point">
+      <span class="idx">5</span>
+      <div>
+        <h5>Ley 21.719 — entra en vigencia dentro del horizonte del proyecto</h5>
+        <p>1 de diciembre de 2026. Los pilotos de 90 días la cruzan. Todo mecanismo de captura (QR, formularios, encuestas) necesita base de licitud declarada antes de diseñarse. Lo estamos tratando como ventaja: Marley construye desde cero y puede nacer conforme.</p>
+        <span class="ask">¿el desafío espera que esto se trate a nivel de riesgo, o vale como eje diferenciador de la propuesta?</span>
+      </div>
+    </div>
+    <div class="point">
+      <span class="idx">6</span>
+      <div>
+        <h5>Nivel de detalle esperado del business case</h5>
+        <p>Nos falta el costo de venta real de Marley para dimensionar la ventana de alivio de margen, y el tráfico de consumidores en estaciones y panaderías.</p>
+        <span class="ask">¿con qué nivel de supuesto se puede trabajar el ROI sin que la comisión lo lea como voluntarista?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:1.4rem">
+    <div class="panel reveal d1">
+      <h4>Las tres objeciones que ya tenemos respondidas</h4>
+      <ul>
+        <li><b>"¿Y si NPS 38 es normal en el canal institucional?"</b> → La comparación no es contra un benchmark externo: es interna. Horeca, misma casa, marca 46 con <em>menos</em> retención. Lo anómalo es la inversión de orden, no el nivel absoluto.</li>
+        <li><b>"90% de retención es excelente, ¿por qué arreglarlo?"</b> → Porque es el resultado de un sistema cuyo insumo se deteriora, y el colchón es el costo de cambio — que lo controla el competidor, no Marley.</li>
+        <li><b>"No tienen datos para probarlo."</b> → Correcto: está declarado como hipótesis H1 con cinco métodos de verificación. Y que Marley hoy no pueda probarlo <em>ni descartarlo</em> es, en sí mismo, el hallazgo.</li>
+      </ul>
+    </div>
+    <div class="panel reveal d2">
+      <h4>Supuestos propios declarados · lo que sigue abierto</h4>
+      <ul>
+        <li><b>Reposición mensual por punto Horeca</b> — el brief no da frecuencia. Si es quincenal, la carga manual se duplica y el argumento se refuerza.</li>
+        <li><b>Base del cálculo del CRM</b> — el 40% de completitud se mide sobre el 65% registrado. Si fuera sobre el universo, es peor que 26%.</li>
+        <li><b>Ponderación del NPS por ventas</b> — inferida por coincidencia aritmética. A confirmar.</li>
+        <li><b>Rotación de personal en puntos de terceros</b> — es la hipótesis H4, no un hecho.</li>
+        <li class="ok"><b>Abierto:</b> costo de venta real · tráfico en estaciones y panaderías · calendario de renovaciones OCS · qué se puede exigir hoy a XYZ SPA por contrato.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>Régimen de datos:</b> todo lo presentado distingue dato público (FNE ago-2025, prensa, GPS Property), supuesto académico del caso, derivación propia con fórmula explícita e hipótesis por verificar.
+  Ningún supuesto propio contradice una cifra del brief.<br>
+  <b>Respaldo completo:</b> <code>01-DIAGNOSTICO-OMNICANAL.md</code> — 12 secciones, con FODA, PESTEL, cadena de valor, benchmark verificado y las 7 hipótesis con su método de levantamiento.
+</footer>
+
+<script>
+// Reveal progresivo al hacer scroll — CSS hace el resto
+document.addEventListener('DOMContentLoaded',()=>{
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running';io.unobserve(e.target)}})
+  },{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>{
+    if(el.closest('.hero'))return;            // el hero anima de inmediato
+    el.style.animationPlayState='paused';
+    io.observe(el);
+  });
+});
+</script>
+</body>
+</html>

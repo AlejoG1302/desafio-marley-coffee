@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta Food Service · Marley Coffee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* === PALETA Y ESCALA · idénticas a la presentación del diagnóstico === */
+:root{
+  --verde:#5E7E29; --verde-osc:#3B5218; --amar:#F7BE00;
+  --tinta:#1C1C1C; --carbon:#262626; --gris:#6E6E6E; --hueso:#F7F5F0; --blanco:#fff; --rojo:#B0331A;
+  --d1:clamp(1.75rem,5vw,6.5rem); --d2:clamp(1.25rem,3.05vw,3.8rem); --d3:clamp(.95rem,1.9vw,2rem);
+  --big:clamp(2.2rem,7.1vw,10.5rem); --body:clamp(.74rem,1.04vw,1.35rem); --sm:clamp(.6rem,.78vw,.98rem);
+  --pad:clamp(1.4rem,5.6vw,8rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow-x:hidden}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{font-family:'Archivo',sans-serif;color:var(--tinta);background:var(--tinta);font-size:var(--body);line-height:1.42;-webkit-font-smoothing:antialiased}
+
+/* === LÁMINA BASE === */
+.s{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;position:relative;
+   display:flex;flex-direction:column;justify-content:center;padding:var(--pad);background:var(--hueso);isolation:isolate}
+.s.dark{background:var(--carbon);color:var(--blanco)}
+.s.green{background:var(--verde);color:var(--blanco)}
+.s.yellow{background:var(--amar);color:var(--tinta)}
+.s::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.s::before{content:"";position:absolute;top:0;left:0;right:0;height:9px;z-index:3;
+  background:linear-gradient(90deg,var(--verde) 0 33.3%,var(--amar) 33.3% 66.6%,var(--tinta) 66.6% 100%)}
+.s.dark::before{background:linear-gradient(90deg,var(--amar) 0 33.3%,var(--verde) 33.3% 66.6%,var(--blanco) 66.6% 100%)}
+.s.green::before{background:linear-gradient(90deg,var(--amar) 0 50%,var(--tinta) 50% 100%)}
+.s.yellow::before{background:linear-gradient(90deg,var(--verde) 0 50%,var(--tinta) 50% 100%)}
+
+/* === FOTO DE FONDO === */
+.ph{position:absolute;inset:0;z-index:-3;background-size:cover;background-position:center;filter:contrast(1.06) brightness(.97)}
+.ph.right{background-position:right center}
+.tint{position:absolute;inset:0;z-index:-2;background:var(--verde);mix-blend-mode:multiply;opacity:.8}
+.tint.warm{background:#3a2a12;opacity:.7}
+.veil{position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(18,18,18,.92) 0 30%,rgba(18,18,18,.66) 50%,rgba(18,18,18,.16) 78%,transparent 100%)}
+.veil.flat{background:linear-gradient(100deg,rgba(16,16,16,.95) 0 55%,rgba(16,16,16,.86) 70%,rgba(16,16,16,.5) 86%,rgba(16,16,16,.2) 100%)}
+.s.photo{color:var(--blanco);background:var(--carbon)} .s.photo .mut{color:rgba(255,255,255,.8)}
+
+/* === TIPOGRAFÍA === */
+h1,h2,.num,.k,h3,h4{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.005em}
+h1{font-size:var(--d1);line-height:1}
+h2{font-size:var(--d2);line-height:1.02;margin-bottom:.4rem}
+h3{font-size:var(--d3);line-height:1.05;margin-bottom:.25rem}
+.lines{display:flex;flex-direction:column;align-items:flex-start;gap:.12em}
+.lines span{display:inline-block;line-height:1;padding:.09em 0}
+.lines span.hl{background:var(--amar);color:var(--tinta);padding:.09em .22em;transform:rotate(-1.1deg)}
+.lines span.hl:nth-child(even){transform:rotate(.8deg)}
+.eyebrow{font-size:var(--sm);letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--verde);margin-bottom:.7rem}
+.dark .eyebrow,.green .eyebrow,.photo .eyebrow{color:var(--amar)}
+.yellow .eyebrow{color:var(--verde-osc)}
+p{max-width:68ch}
+.lead{font-size:clamp(.8rem,1.27vw,1.6rem);line-height:1.45;max-width:60ch;margin-top:.8rem}
+.mut{color:var(--gris)} .dark .mut,.green .mut{color:rgba(255,255,255,.75)} .yellow .mut{color:#6a5500}
+.num{font-size:var(--big);line-height:.8;color:var(--verde)}
+.yellow .num{color:var(--tinta)}
+.rule{width:clamp(62px,6vw,110px);height:clamp(6px,.7vw,11px);background:var(--amar);margin:.9rem 0;transform:skewX(-14deg)}
+
+/* === TARJETAS Y GRILLAS === */
+.grid{display:grid;gap:clamp(.42rem,1.1vw,1.2rem);margin-top:clamp(.6rem,1.7vw,1.5rem)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,175px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}
+.card{background:var(--blanco);padding:clamp(.5rem,1.3vw,1.3rem);position:relative;box-shadow:5px 5px 0 rgba(0,0,0,.1)}
+.card:nth-child(odd){transform:rotate(-.4deg)} .card:nth-child(even){transform:rotate(.35deg)}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--verde)}
+.card.a::before{background:var(--amar)} .card.r::before{background:var(--rojo)}
+.dark .card{background:#333;color:var(--blanco);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+.photo .card{background:rgba(0,0,0,.66);color:var(--blanco);backdrop-filter:blur(3px)}
+.card .k{font-size:clamp(1.1rem,2.45vw,3.1rem);line-height:.88;color:var(--verde)}
+.dark .card .k,.photo .card .k{color:var(--amar)}
+.card h4{font-size:clamp(.78rem,1.27vw,1.45rem);line-height:1;margin-bottom:.25rem}
+.card .l{font-size:var(--sm);line-height:1.32;margin-top:.24rem;color:var(--gris)}
+.dark .card .l,.photo .card .l{color:rgba(255,255,255,.8)}
+.kl{font-size:var(--sm);font-weight:800;text-transform:uppercase;letter-spacing:.05em;line-height:1.15;margin:.12rem 0 .2rem;color:var(--verde-osc)}
+
+.split{display:grid;grid-template-columns:1.5fr .78fr;gap:clamp(.8rem,2.4vw,3rem);align-items:center}
+.split.even{grid-template-columns:1fr 1fr}
+.src{font-size:calc(var(--sm)*.88);color:var(--gris);margin-top:.8rem;font-style:italic;max-width:96ch}
+.dark .src,.green .src,.photo .src{color:rgba(255,255,255,.62)} .yellow .src{color:#6a5500}
+
+table{width:100%;border-collapse:collapse;font-size:clamp(.62rem,.9vw,1.12rem);margin-top:.8rem}
+th{background:var(--tinta);color:var(--blanco);text-align:left;padding:.55rem .75rem;font-size:calc(var(--sm)*.94);text-transform:uppercase;letter-spacing:.06em}
+td{padding:.5rem .75rem;border-bottom:1px solid #e2ddd2;background:var(--blanco);vertical-align:top}
+.dark td{background:#333;border-color:#444}
+
+.chain{display:grid;gap:.32rem;margin-top:.15rem}
+.chain div{background:var(--blanco);padding:.55rem .95rem;font-size:var(--sm);border-left:7px solid var(--verde);line-height:1.34}
+.dark .chain div{background:#333}
+.chain div.root{background:var(--amar);color:var(--tinta);border-left-color:var(--tinta);font-family:'Anton',sans-serif;
+  text-transform:uppercase;font-size:clamp(.75rem,1.27vw,1.55rem);letter-spacing:.02em;transform:rotate(-.5deg);box-shadow:4px 4px 0 rgba(0,0,0,.25)}
+.chain div b{font-family:'Anton',sans-serif;font-weight:400;color:var(--verde);margin-right:.3rem}
+.dark .chain div b{color:var(--amar)}
+
+.tag{display:inline-block;align-self:flex-start;background:var(--tinta);color:var(--amar);font-size:var(--sm);font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;padding:.2rem .55rem;margin-bottom:.6rem;transform:rotate(-1.4deg)}
+.yellow .tag{background:var(--tinta)}
+.diag{position:absolute;right:-6%;top:-10%;width:32vw;height:130%;z-index:-1;opacity:.09;
+  background:repeating-linear-gradient(-20deg,var(--verde) 0 22px,transparent 22px 62px,var(--amar) 62px 84px,transparent 84px 124px)}
+footer.f{position:absolute;bottom:calc(var(--pad)*.42);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;
+  font-size:var(--sm);color:var(--gris);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.dark footer.f,.green footer.f,.photo footer.f{color:rgba(255,255,255,.6)} .yellow footer.f{color:#6a5500}
+.brand{display:flex;align-items:center;gap:.5rem;font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.09em;font-size:var(--sm)}
+.brand i{width:20px;height:20px;border-radius:50%;background:var(--amar);flex-shrink:0;box-shadow:0 0 0 3px rgba(94,126,41,.85)}
+.dots{position:fixed;right:clamp(.35rem,1vw,.9rem);top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:6px}
+.dots a{width:7px;height:7px;border-radius:50%;background:rgba(128,128,128,.4);display:block;transition:.18s}
+.dots a.on{background:var(--amar);transform:scale(1.6);box-shadow:0 0 0 2px rgba(94,126,41,.7)}
+
+/* === EMBUDO (del deck anterior) === */
+.s.mint{background:#E9EFDC;color:var(--tinta)}
+.s.mint::before{background:linear-gradient(90deg,var(--verde) 0 50%,var(--amar) 50% 100%)}
+.mint .eyebrow{color:var(--verde-osc)} .mint footer.f{color:#7a8768} .mint .src{color:#5b6849}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.5vw,8px)}
+.fstep{width:var(--w);background:var(--verde);color:var(--blanco);text-align:center;
+  padding:clamp(.5rem,1.05vw,1.05rem) 9%;clip-path:polygon(0 0,100% 0,96% 100%,4% 100%);box-shadow:5px 5px 0 rgba(0,0,0,.13)}
+.fstep b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(.8rem,1.32vw,1.6rem);line-height:1}
+.fstep i{display:block;font-style:normal;font-size:var(--sm);line-height:1.25;opacity:.92;margin-top:.22rem}
+
+/* === CAPACIDADES / OBJETIVOS ESPECÍFICOS === */
+.caps{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(.3rem,.7vw,.78rem);margin-top:clamp(.6rem,1.4vw,1.3rem)}
+.cap{background:var(--blanco);border-top:5px solid var(--verde);padding:clamp(.42rem,.9vw,.9rem);box-shadow:4px 4px 0 rgba(0,0,0,.12);display:flex;gap:.5rem;align-items:flex-start}
+.cap em{font-style:normal;font-family:'Anton',sans-serif;color:var(--verde);flex-shrink:0;line-height:1;font-size:clamp(.85rem,1.4vw,1.7rem)}
+.cap b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(.72rem,1.1vw,1.28rem);line-height:1}
+.cap span{display:block;font-size:calc(var(--sm)*.96);line-height:1.28;color:var(--gris);margin-top:.18rem}
+
+/* === CIERRE === */
+.cierre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
+  font-size:clamp(.95rem,1.85vw,2.35rem);line-height:1.12;margin-top:clamp(.8rem,2vw,1.8rem);max-width:min(94%,880px)}
+.cierre b{color:var(--amar)}
+.sub{font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-top:.75rem;opacity:.82}
+
+/* ══ COMPONENTES NUEVOS DE ESTA PRESENTACIÓN ══ */
+/* listas cortas dentro de tarjetas */
+.lst{list-style:none;margin-top:.3rem}
+.lst li{position:relative;padding-left:1.05em;font-size:var(--sm);line-height:1.32;margin:.24rem 0}
+.lst li::before{content:"";position:absolute;left:0;top:.42em;width:.48em;height:.48em;background:var(--verde)}
+.card.r .lst li::before{background:var(--rojo)} .card.a .lst li::before{background:var(--amar)}
+/* pasos numerados (fases, flujos, tareas) */
+.flow{display:grid;gap:clamp(.25rem,.5vw,.45rem);margin-top:.35rem}
+.flow>div{display:flex;gap:.7rem;align-items:center;background:var(--blanco);padding:clamp(.32rem,.66vw,.66rem) clamp(.5rem,.9vw,.9rem);
+  border-left:6px solid var(--verde);font-size:var(--sm);line-height:1.3;box-shadow:3px 3px 0 rgba(0,0,0,.08)}
+.flow>div b{font-family:'Anton',sans-serif;font-weight:400;color:var(--verde);font-size:clamp(.9rem,1.5vw,1.8rem);line-height:1;min-width:1.5em}
+.flow strong{display:block;font-weight:800}
+.dark .flow>div{background:#333;border-left-color:var(--amar)} .dark .flow>div b{color:var(--amar)}
+/* cadena sobre foto y sobre verde pastel */
+.photo .chain div:not(.root){background:rgba(0,0,0,.62);color:#fff} .photo .chain div b{color:var(--amar)}
+/* capturas del prototipo */
+.screen{margin:0;background:#fff;border:4px solid var(--tinta);box-shadow:8px 8px 0 var(--verde)}
+.dark .screen{border-color:#111;box-shadow:8px 8px 0 var(--amar)}
+.screen img,.screen video{display:block;width:100%;height:auto}
+.screen video{max-height:60vh;background:#111;cursor:pointer}
+/* lámina de demo: video grande + pasos del flujo */
+.demo-video{display:grid;grid-template-columns:1.8fr 1fr;gap:clamp(1rem,2.4vw,3rem);align-items:center;margin-top:clamp(.6rem,1.4vw,1.3rem)}
+.demo-video .demo-link{font-size:clamp(.8rem,1.35vw,1.7rem);white-space:nowrap}
+/* ══ VERSIÓN DIRECTORIO: menos texto, letra más grande ══ */
+:root{--d2:clamp(1.25rem,3.8vw,4.8rem)}
+.tag{font-size:clamp(.6rem,.95vw,1.2rem)}
+.s .card .k{font-size:clamp(1.1rem,3vw,3.8rem)}
+.s .card .l,.flow>div{font-size:clamp(.66rem,1.15vw,1.45rem)}
+.card h4{font-size:clamp(.78rem,1.5vw,1.8rem)}
+.green .flow>div{color:var(--tinta)}
+.route b{font-size:clamp(.72rem,1.4vw,1.7rem)}
+.route span{font-size:clamp(.6rem,.95vw,1.15rem)}
+.fstep b{font-size:clamp(.8rem,1.6vw,1.9rem)}
+.fstep i{font-size:clamp(.64rem,1.05vw,1.3rem)}
+.lst.lg li{font-size:clamp(.78rem,1.5vw,1.85rem);margin:.5rem 0}
+/* equilibrio: el texto de apoyo vuelve, pero legible */
+.num.comma{padding-bottom:.2em}                                   /* la coma de 9,9% no toca la línea de abajo */
+.s .card .k,.kpi .k{padding-bottom:.1em}
+.lst.md li{font-size:clamp(.66rem,1.1vw,1.35rem);margin:.32rem 0}
+.kl{font-size:clamp(.62rem,.95vw,1.15rem)}
+.chain div{font-size:clamp(.64rem,1.05vw,1.3rem)}
+.chain div.root{font-size:clamp(.75rem,1.45vw,1.8rem)}
+.s table{font-size:clamp(.66rem,1.05vw,1.3rem)}
+.s th{font-size:clamp(.58rem,.85vw,1.05rem)}
+.dark .route>div:nth-child(odd){background:#4a4a4a}
+.caps.big .cap small{display:block;font-size:clamp(.58rem,.85vw,1.05rem);color:#5a4a00;line-height:1.25;margin-top:.25rem}
+.kpis.k6{grid-template-columns:repeat(3,1fr)}
+.kpi small{display:block;font-size:clamp(.58rem,.85vw,1.05rem);color:#6a5500;margin-top:.25rem}
+.caps.big .cap span{font-family:'Anton',sans-serif;font-size:clamp(.95rem,1.8vw,2.2rem);color:var(--tinta);margin-top:.3rem}
+.route.r4{grid-template-columns:repeat(4,1fr)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(.4rem,1vw,1.1rem);margin-top:clamp(.8rem,2vw,2rem)}
+.kpi{background:var(--blanco);padding:clamp(.6rem,1.4vw,1.4rem);border-top:6px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.12)}
+.kpi .k{font-family:'Anton',sans-serif;font-size:clamp(1.1rem,2.5vw,3.1rem);line-height:1}
+.kpi b{display:block;font-weight:800;font-size:clamp(.7rem,1.1vw,1.35rem);margin-top:.5rem}
+.kpi span{display:block;font-size:clamp(.62rem,.95vw,1.15rem);color:var(--verde-osc);font-weight:700;margin-top:.3rem}
+@media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.demo-link{display:inline-block;align-self:flex-start;margin-top:clamp(.9rem,2vw,1.8rem);background:var(--amar);color:var(--tinta);font-family:'Anton',sans-serif;
+  text-transform:uppercase;letter-spacing:.02em;font-size:clamp(1rem,2vw,2.4rem);line-height:1.05;padding:.45rem 1rem .5rem;transform:rotate(-.8deg);box-shadow:5px 5px 0 rgba(0,0,0,.3)}
+.demo-link span{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:var(--sm);letter-spacing:.2em;opacity:.7}
+/* recorrido de compra en flechas */
+.route{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:clamp(.6rem,1.3vw,1.2rem)}
+.route>div{background:var(--tinta);color:#fff;padding:clamp(.42rem,.85vw,.85rem) 1.5em clamp(.42rem,.85vw,.85rem) 1.7em;
+  clip-path:polygon(0 0,calc(100% - 1em) 0,100% 50%,calc(100% - 1em) 100%,0 100%,1em 50%)}
+.route>div:first-child{clip-path:polygon(0 0,calc(100% - 1em) 0,100% 50%,calc(100% - 1em) 100%,0 100%);padding-left:.9em}
+.route>div:nth-child(even){background:var(--verde)}
+.route b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(.72rem,1.15vw,1.35rem);line-height:1}
+.route span{display:block;font-size:calc(var(--sm)*.92);line-height:1.2;opacity:.88;margin-top:.15rem}
+/* embudo y tabla sobre fondo verde */
+.green .fstep{background:rgba(0,0,0,.34)} .green .fstep.ret{background:var(--amar);color:var(--tinta)}
+.green td{background:rgba(0,0,0,.24);border-color:rgba(255,255,255,.14);color:#fff} .green td:first-child{color:var(--amar);font-weight:800;width:38%}
+/* tabla de KPIs sobre amarillo */
+.yellow td:first-child{width:24%}
+
+@media (max-height:780px){:root{--big:clamp(2rem,6.5vw,4.6rem);--d1:clamp(1.6rem,4.4vw,3rem);--d2:clamp(1.15rem,2.7vw,1.9rem)}}
+@media (max-height:660px){:root{--pad:clamp(.75rem,2.4vw,1.6rem);--big:clamp(1.8rem,5.5vw,3.4rem)}.lead{font-size:.8rem;margin-top:.45rem}.dots{display:none}.rule{margin:.45rem 0}.split{grid-template-columns:1fr}}
+@media (max-height:540px){:root{--big:clamp(1.6rem,4.5vw,2.6rem);--d1:clamp(1.25rem,3.4vw,2rem);--d2:clamp(.98rem,2.2vw,1.4rem);--sm:.6rem}.lead{font-size:.73rem}.card .l{font-size:.6rem}.diag{display:none}}
+@media (max-width:860px){.split,.split.even{grid-template-columns:1fr}.caps{grid-template-columns:repeat(2,1fr)}.demo-video{grid-template-columns:1fr}.route{grid-template-columns:repeat(3,1fr)}.diag{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.s{height:auto;page-break-after:always}.dots{display:none}}
+</style>
+</head>
+<body>
+<nav class="dots" aria-label="Navegación"></nav>
+
+<!-- ══ 01 · PORTADA ══ -->
+<section class="s photo">
+  <div class="ph right" style="background-image:url(img/foto-1.jpg)"></div>
+  <div class="tint warm"></div><div class="veil"></div>
+  <div class="brand" style="margin-bottom:auto;color:#fff"><i></i><span>Marley Coffee · Chile</span></div>
+  <div>
+    <div class="eyebrow">Propuesta inicial integrada · MVP · UX/UI · Inbound · E-commerce</div>
+    <h1 class="lines"><span>Retener</span><span>en vez de</span><span class="hl">reconquistar</span></h1>
+    <div class="rule"></div>
+    <p class="lead mut">Una consola para que Marley vea cada local a tiempo, y un WhatsApp para que el cliente
+    no tenga que perseguir a nadie.</p>
+  </div>
+  <footer class="f"><span>Taller Aplicado de Marketing III · Duoc UC</span><span>01 / 14</span></footer>
+</section>
+
+<!-- ══ 02 · EL DIAGNÓSTICO, EN UNA LÁMINA ══ -->
+<section class="s photo">
+  <div class="ph" style="background-image:url(img/foto-3.jpg)"></div>
+  <div class="tint warm" style="opacity:.8"></div><div class="veil flat"></div>
+  <div style="max-width:84%">
+    <div class="tag">De dónde partimos</div>
+    <h2 class="lines"><span>Marley no retiene a sus clientes:</span><span class="hl">los reconquista</span></h2>
+    <p class="lead">En Horeca, cada reposición reinicia la compra fuera de todo sistema. Y cada reinicio expone al cliente a un atraso, un quiebre o una máquina detenida que nadie vincula con su cuenta.</p>
+    <div class="grid g4">
+      <div class="card a"><div class="k">9,9%</div><div class="l">del food service se fuga al año: 287 puntos equivalentes [D]</div></div>
+      <div class="card"><div class="k">82%</div><div class="l">de las reposiciones Horeca pasa por ejecutivo, correo o mensajería [C]</div></div>
+      <div class="card"><div class="k">81%</div><div class="l">de la fuga está en Horeca, donde Marley actúa sin terceros [D]</div></div>
+      <div class="card r"><div class="k">26%</div><div class="l">de fichas Horeca completas: no hay identificador único [D]</div></div>
+    </div>
+    <div class="chain" style="margin-top:clamp(.6rem,1.2vw,1.2rem)">
+      <div class="root">La causa: sin trazabilidad por local, Marley no ve la fuga a tiempo</div>
+      <div><b>C1</b> Reposición manual &nbsp;·&nbsp; <b>C2</b> Sin señal propia en el local &nbsp;·&nbsp; <b>C3</b> 840 puntos de terceros sin datos &nbsp;·&nbsp; <b>C4</b> Sin identidad común</div>
+    </div>
+    <p class="src">Estimación bajo supuestos, no pérdida observada: aplica la retención del caso (86% Horeca, 90% OCS) a los puntos activos.</p>
+  </div>
+  <footer class="f"><span>Diagnóstico</span><span>02 / 14</span></footer>
+</section>
+
+<!-- ══ 03 · EL OBJETIVO ══ -->
+<section class="s yellow">
+  <div class="eyebrow">El objetivo · 12 meses</div>
+  <div class="num comma" style="font-size:clamp(3rem,9vw,11.5rem)">9,9% → 7,6%</div>
+  <h2>de fuga estimada en el food service</h2>
+  <p class="lead" style="margin-top:.2rem">Reteniendo en Horeca a los clientes que hoy se reconquistan. Es la meta oficial de retención Horeca, de 86% a 90% [C], traducida a ingresos.</p>
+  <div class="caps big">
+    <div class="cap"><em>OE1</em><div><b>Fichas completas</b><span>26% → 80%</span><small>en 6 meses, para identificar cada baja</small></div></div>
+    <div class="cap"><em>OE2</em><div><b>Reposición digital</b><span>18% → 40%</span><small>en 12 meses, para dejar de reconquistar</small></div></div>
+    <div class="cap"><em>OE3</em><div><b>Detección anticipada</b><span>0% → 60%</span><small>en 12 meses, para retener a tiempo</small></div></div>
+    <div class="cap"><em>OE4</em><div><b>Terceros con datos</b><span>0% → 80%</span><small>en 8 meses, para medir su fuga</small></div></div>
+    <div class="cap"><em>OE5</em><div><b>Leads clasificados</b><span>0% → 100%</span><small>en 3 meses, para separar reposición de crecimiento</small></div></div>
+  </div>
+  <footer class="f"><span>Objetivo</span><span>03 / 14</span></footer>
+</section>
+
+<!-- ══ 04 · 1.1 ALCANCE DEL MVP ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.1 · Alcance del MVP</div>
+  <h2>Una consola y un WhatsApp, 14 locales, 90 días</h2>
+  <div class="grid g4">
+    <div class="card a"><div class="k">8 + 6</div><div class="l">locales Horeca y OCS: el máximo que permite el caso [C]</div></div>
+    <div class="card a"><div class="k">90</div><div class="l">días de piloto, con criterios de decisión fijados antes</div></div>
+    <div class="card a"><div class="k">0</div><div class="l">hardware nuevo: corre sobre CRM, ERP y WhatsApp</div></div>
+    <div class="card a"><div class="k">2</div><div class="l">hipótesis: el cliente acepta un canal que registra y la fuga se anuncia</div></div>
+  </div>
+  <div class="split even" style="margin-top:clamp(.7rem,1.6vw,1.6rem);align-items:stretch">
+    <div class="card"><h4>Entra</h4><ul class="lst md">
+      <li><b>Ficha única:</b> RUT, local, máquina y contrato</li>
+      <li><b>WhatsApp:</b> aviso de fecha, agenda, pedido, estado y fallas</li>
+      <li><b>Consola:</b> semáforo, cola Hoy, despachos y servicio técnico</li>
+      <li><b>Registro:</b> acciones comerciales y motivo de baja</li></ul></div>
+    <div class="card r"><h4>Queda fuera, por ahora</h4><ul class="lst md">
+      <li><b>Portal web:</b> el cliente ya pide por mensajería</li>
+      <li><b>Telemetría:</b> falta confirmar qué máquinas envían datos</li>
+      <li><b>Modelo predictivo:</b> 14 locales no dan casos suficientes</li>
+      <li><b>Estaciones y panaderías:</b> requieren aprobación del operador</li></ul></div>
+  </div>
+  <footer class="f"><span>MVP</span><span>04 / 14</span></footer>
+</section>
+
+<!-- ══ 05 · 1.2 PROPUESTA DE VALOR ══ -->
+<section class="s mint">
+  <div class="tag">1.2 · Propuesta de valor</div>
+  <h2>Al cliente se le quita trabajo.<br>A Marley se le da visibilidad.</h2>
+  <div class="split even" style="align-items:stretch;margin-top:clamp(.6rem,1.4vw,1.4rem)">
+    <div class="card a"><h4>Dueño Horeca y encargado OCS</h4><div class="kl">Recibe cuando está en el local, sin perseguir a nadie</div><ul class="lst md">
+      <li>Marley le avisa que se acerca su fecha</li>
+      <li>Elige día y horario; si surge un imprevisto, reagenda</li>
+      <li>Repite «lo de siempre» con su precio de contrato</li>
+      <li>Reporta una falla sin llamar</li></ul></div>
+    <div class="card"><h4>Comercial, coordinación y técnicos</h4><div class="kl">Ve cada local y se adelanta al reclamo</div><ul class="lst md">
+      <li>A quién llamar hoy y por qué</li>
+      <li>Qué está agendado, en ruta o atrasado</li>
+      <li>Qué máquina espera técnico</li>
+      <li>Si la fuga baja en el piloto</li></ul></div>
+  </div>
+  <div class="chain" style="margin-top:clamp(.6rem,1.4vw,1.4rem)">
+    <div class="root">Regla de diseño: la señal nunca depende de que el dueño haga algo extra</div>
+    <div><b>Por qué Marley</b> Nestlé lidera con 60–70% [P] y compite por continuidad; ninguno de 9 proveedores revisados declara pedido con seguimiento [EV].</div>
+  </div>
+  <p class="src">Segmentos del piloto: Horeca de la Región Metropolitana y OCS de atención directa [C].</p>
+  <footer class="f"><span>Propuesta de valor</span><span>05 / 14</span></footer>
+</section>
+
+<!-- ══ 06 · 1.3 VIABILIDAD ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.3 · Viabilidad</div>
+  <h2>Se hace con lo que Marley ya tiene</h2>
+  <div class="route r4">
+    <div><b>Base · sem. 1–6</b><span>Ficha de los 14 locales, consola y plantillas de WhatsApp</span></div>
+    <div><b>Piloto · meses 2–4</b><span>Pedidos, agenda y tickets por WhatsApp</span></div>
+    <div><b>Calibrar · meses 5–8</b><span>Semáforo ajustado con historial real</span></div>
+    <div><b>Escalar · meses 9–12</b><span>Hasta 40% de reposición digital</span></div>
+  </div>
+  <div class="split even" style="align-items:start;margin-top:clamp(.8rem,1.8vw,1.8rem)">
+    <table style="margin-top:0"><thead><tr><th>Al día 90</th><th>Escalar si</th><th>Detener si</th></tr></thead><tbody>
+      <tr><td>Locales con 2+ pedidos por WhatsApp</td><td>≥ 60%</td><td>&lt; 30%</td></tr>
+      <tr><td>Pedidos asociados a su local</td><td>≥ 95%</td><td>&lt; 80%</td></tr>
+      <tr><td>Alertas con acción en ≤ 2 días</td><td>≥ 80%</td><td>&lt; 50%</td></tr>
+      <tr><td>Visitas agendadas por el cliente</td><td>≥ 50%</td><td>&lt; 25%</td></tr>
+    </tbody></table>
+    <div class="card"><h4>Recursos y riesgos</h4><ul class="lst md">
+      <li><b>Recursos:</b> equipo del caso y sin hardware, dentro del tope de $220 M [C]</li>
+      <li><b>Adopción baja:</b> se detiene antes de escalar</li>
+      <li><b>Semáforo marca a casi todos:</b> se recalibran los pesos</li>
+      <li><b>Máquinas con datos:</b> la telemetría entra como fuente extra</li></ul></div>
+  </div>
+  <footer class="f"><span>Viabilidad</span><span>06 / 14</span></footer>
+</section>
+
+<!-- ══ 07 · 1.4 ARQUITECTURA Y FLUJOS ══ -->
+<section class="s dark">
+  <div class="tag">1.4 · Arquitectura y flujos</div>
+  <h2>Conecta lo que existe. No reemplaza nada.</h2>
+  <figure class="screen" style="margin-top:clamp(.7rem,1.6vw,1.6rem)"><img src="img/app-hub.jpg" alt="La consola conecta CRM y ERP con WhatsApp y terceros"></figure>
+  <div class="eyebrow" style="margin-top:clamp(.9rem,2vw,2rem)">Flujo principal · reparto programado</div>
+  <div class="route" style="margin-top:0">
+    <div><b>Aviso</b><span>5 días antes</span></div>
+    <div><b>Agenda</b><span>el cliente elige</span></div>
+    <div><b>ERP</b><span>pedido programado</span></div>
+    <div><b>Recordatorio</b><span>el día anterior</span></div>
+    <div><b>Entrega</b><span>marcada por enlace</span></div>
+    <div><b>Semáforo</b><span>suma historial</span></div>
+  </div>
+  <p class="lead">Una sola llave une todo: <b style="color:var(--amar)">RUT + local + máquina</b>. La consola se ordena en seguimiento, operación y sistema.</p>
+  <footer class="f"><span>Arquitectura</span><span>07 / 14</span></footer>
+</section>
+
+<!-- ══ 08 · DEMO DEL PROTOTIPO ══ -->
+<section class="s dark">
+  <div class="tag">El prototipo</div>
+  <h2>La consola, funcionando</h2>
+  <div class="demo-video">
+    <figure class="screen"><video id="demo" src="marley-demo.mp4" poster="img/demo-poster.jpg" muted loop playsinline preload="auto" aria-label="Video demo: del WhatsApp a la ficha y al calendario de despachos"></video></figure>
+    <div>
+      <div class="flow">
+        <div><b>1</b><span>Marley avisa que se acerca la fecha del local</span></div>
+        <div><b>2</b><span>El cliente responde por WhatsApp y elige día y horario</span></div>
+        <div><b>3</b><span>La ficha y el calendario de despachos se actualizan solos</span></div>
+        <div><b>4</b><span>Si surge un imprevisto, reagenda cuando el cliente puede</span></div>
+      </div>
+      <div class="demo-link"><span>Demo en vivo</span>alejog1302.github.io/marley-consola</div>
+    </div>
+  </div>
+  <p class="src">Datos sintéticos: 2.410 locales y 180 días de pedidos, calibrados a las líneas base del caso. Ningún dato corresponde a clientes reales.</p>
+  <footer class="f"><span>Demo</span><span>08 / 14</span></footer>
+</section>
+
+<!-- ══ 09 · 1.5 DECISIONES UX/UI ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.5 · Decisiones UX/UI</div>
+  <h2>Cada pantalla responde a un hallazgo</h2>
+  <div class="grid g4">
+    <div class="card"><div class="k">01</div><h4>Todo pasa en WhatsApp</h4><div class="l">El 82% ya repone por mensajería o ejecutivo [C]</div></div>
+    <div class="card"><div class="k">02</div><h4>Señales del sistema</h4><div class="l">Docente: si depende de que el dueño reporte, falla</div></div>
+    <div class="card"><div class="k">03</div><h4>El cliente elige cuándo</h4><div class="l">Un reparto a un local cerrado es un viaje perdido</div></div>
+    <div class="card"><div class="k">04</div><h4>Semáforo explicable</h4><div class="l">Los puntajes opacos suelen fallar (Ascarza, 2018)</div></div>
+  </div>
+  <figure class="screen" style="margin-top:clamp(.9rem,2vw,2rem);width:min(58%,960px)"><img src="img/app-reglas.jpg" alt="Cómo decide el semáforo, con un local del piloto"></figure>
+  <footer class="f"><span>Decisiones de diseño</span><span>09 / 14</span></footer>
+</section>
+
+<!-- ══ 10 · 1.6 VALIDACIÓN TEMPRANA ══ -->
+<section class="s dark">
+  <div class="tag">1.6 · Validación temprana</div>
+  <h2>Nueve hallazgos, nueve ajustes</h2>
+  <div class="split even" style="align-items:start;margin-top:clamp(.5rem,1.2vw,1.2rem)">
+    <div>
+      <div class="grid g3" style="margin-top:0">
+        <div class="card a"><div class="k">9</div><div class="l">hallazgos</div></div>
+        <div class="card r"><div class="k">6</div><div class="l">de severidad alta</div></div>
+        <div class="card"><div class="k">9</div><div class="l">mejoras incorporadas</div></div>
+      </div>
+      <div class="chain" style="margin-top:clamp(.6rem,1.4vw,1.4rem)">
+        <div><b>Docente</b> Depender del dueño falla → ninguna señal le exige una acción</div>
+        <div><b>Revisión</b> No se entendía el semáforo → «cómo funciona» con un local real</div>
+        <div><b>Revisión</b> Despachos parecía logística → mapa de estados y agenda</div>
+        <div><b>Revisión</b> No se veía la conexión → sección Integraciones</div>
+      </div>
+      <p class="src">Fuentes: reunión con el docente (08-09) y revisiones del prototipo. Aún no hay test con usuarios, y así se declara.</p>
+    </div>
+    <div>
+      <div class="eyebrow">Próxima iteración · test de tareas</div>
+      <div class="flow">
+        <div><b>T1</b><span>Encontrar el local más urgente y explicar por qué</span></div>
+        <div><b>T2</b><span>Registrar la llamada a ese local</span></div>
+        <div><b>T3</b><span>Ver qué local reagendó y para cuándo</span></div>
+        <div><b>T4</b><span>Hallar la máquina con más horas sin técnico</span></div>
+        <div><b>T5</b><span>Explicar con qué sistemas se conecta</span></div>
+      </div>
+      <p class="src">3 a 5 personas de perfil comercial o coordinación · éxito, tiempo y dificultad de 1 a 7.</p>
+    </div>
+  </div>
+  <footer class="f"><span>Validación</span><span>10 / 14</span></footer>
+</section>
+
+<!-- ══ 11 · 1.7 INBOUND AUTOMATIZADO ══ -->
+<section class="s green">
+  <div class="tag">1.7 · Inbound automatizado</div>
+  <h2>Captar con contenido. Retener con avisos.</h2>
+  <div class="split even" style="align-items:center;margin-top:clamp(.6rem,1.4vw,1.4rem)">
+    <div class="funnel">
+      <div class="fstep" style="--w:100%"><b>Atraer</b><i>Video de 30 s y checklist de continuidad → formulario</i></div>
+      <div class="fstep" style="--w:90%"><b>Convertir</b><i>Video de comodato y soporte → agenda por WhatsApp</i></div>
+      <div class="fstep" style="--w:80%"><b>Cerrar</b><i>Demo de 15 minutos → alta con ficha completa</i></div>
+      <div class="fstep ret" style="--w:70%"><b>Retener</b><i>Bienvenida, cápsula mensual y avisos</i></div>
+    </div>
+    <div>
+      <div class="eyebrow">Gatillo → acción automática</div>
+      <div class="flow">
+        <div><b>Lead</b><span>web: se clasifica y se asigna un ejecutivo</span></div>
+        <div><b>5d</b><span>antes de la fecha: «¿programamos tu pedido?»</span></div>
+        <div><b>1d</b><span>antes: recordatorio para confirmar o cambiar</span></div>
+        <div><b>90d</b><span>sin mantención: se ofrece la visita</span></div>
+        <div><b>≥7</b><span>puntos de riesgo: la conversación la toma un ejecutivo</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="src">Segmentos: canal, zona, ciclo de vida y color del semáforo · se mide por conducta (pedido, agenda, respuesta), no por aperturas · sólo plantillas aprobadas y con consentimiento [P].</p>
+  <footer class="f"><span>Inbound</span><span>11 / 14</span></footer>
+</section>
+
+<!-- ══ 12 · 1.8 E-COMMERCE Y OPERACIÓN ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.8 · E-commerce y operación</div>
+  <h2>La tienda vive en el chat. La operación se ve en la consola.</h2>
+  <div class="route">
+    <div><b>Aviso</b><span>se acerca la fecha</span></div>
+    <div><b>Agenda</b><span>día y horario</span></div>
+    <div><b>Confirma</b><span>precio de contrato</span></div>
+    <div><b>Recordatorio</b><span>confirmar o cambiar</span></div>
+    <div><b>En ruta</b><span>estado y atraso</span></div>
+    <div><b>Entregado</b><span>marca y evaluación</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:clamp(.8rem,1.8vw,1.8rem)">
+    <div class="card"><h4>Cómo convierte</h4><ul class="lst md">
+      <li>«Repetir pedido» en un toque: 18% → 40% [C]</li>
+      <li>El aviso llega antes de que se acabe el café</li>
+      <li>La negociación sigue siendo humana</li></ul></div>
+    <div class="card a"><h4>Qué pide a la operación</h4><ul class="lst md">
+      <li>Pedido en el ERP con el ID del local</li>
+      <li>Salida y entrega marcadas desde un enlace</li>
+      <li>Tickets con máquina y plantilla de terceros</li></ul></div>
+    <div class="card r"><h4>Fricciones que evita</h4><ul class="lst md">
+      <li>Local cerrado → agenda y reagendar</li>
+      <li>Repartidor que no marca → un toque</li>
+      <li>ERP sin local → ficha única antes del piloto</li></ul></div>
+  </div>
+  <p class="src">No rediseñamos bodegas ni rutas: Marley ya promete 48 h en la RM y 72–96 h en regiones [C]; la consola lo hace visible y medible.</p>
+  <footer class="f"><span>E-commerce</span><span>12 / 14</span></footer>
+</section>
+
+<!-- ══ 13 · 1.9 KPIs ══ -->
+<section class="s yellow">
+  <div class="tag">1.9 · KPIs</div>
+  <h2>Seis indicadores que deciden algo</h2>
+  <div class="kpis k6">
+    <div class="kpi"><div class="k">9,9 → 7,6%</div><b>Fuga estimada del food service</b><small>Fuente: renovaciones en CRM y ERP</small><span>Decide si el plan cumple</span></div>
+    <div class="kpi"><div class="k">86 → 90%</div><b>Retención Horeca</b><small>Fuente: CRM</small><span>Decide escalar a toda la red Horeca</span></div>
+    <div class="kpi"><div class="k">18 → 40%</div><b>Reposición digital Horeca</b><small>Fuente: WhatsApp y ERP</small><span>Bajo 30% en el piloto, se detiene</span></div>
+    <div class="kpi"><div class="k">0 → 60%</div><b>Detección anticipada</b><small>Fuente: semáforo de la consola</small><span>Decide recalibrar los pesos</span></div>
+    <div class="kpi"><div class="k">92 → 96%</div><b>OTIF</b><small>Fuente: marca de entrega</small><span>Decide dónde reforzar el cumplimiento</span></div>
+    <div class="kpi"><div class="k">0 → 50%</div><b>Visitas agendadas por el cliente</b><small>Fuente: agenda de Despachos</small><span>Decide ajustar avisos y franjas</span></div>
+  </div>
+  <p class="src">[C] metas del caso · [D] estimación propia · visitas agendadas es supuesto del equipo [S] · la primera respuesta técnica (31 h [C]) se mide en el piloto como línea base.</p>
+  <footer class="f"><span>Medición</span><span>13 / 14</span></footer>
+</section>
+
+<!-- ══ 14 · CIERRE ══ -->
+<section class="s photo">
+  <div class="ph right" style="background-image:url(img/foto-5.jpg)"></div>
+  <div class="tint warm"></div><div class="veil"></div>
+  <div class="eyebrow">Lo que proponemos</div>
+  <h1 class="lines"><span>Que cada pedido</span><span>deje</span><span class="hl" style="padding-top:.2em">una señal</span></h1>
+  <div class="rule"></div>
+  <p class="lead">Marley ya tiene la red, el canal y la relación. Lo que le falta es verla a tiempo.</p>
+  <div class="cierre">Un piloto de 90 días en 14 locales<b style="display:block;margin-top:.28em">para bajar la fuga de 9,9% a 7,6% en doce meses.</b></div>
+  <div class="sub">Próximos pasos · entrevistas a decisores · test con usuarios · verificar telemetría · costeo</div>
+  <footer class="f"><span>Marley Coffee · Food Service</span><span>14 / 14</span></footer>
+</section>
+
+<script>
+/* === NAVEGACIÓN: puntos laterales y teclado === */
+const slides=document.querySelectorAll('.s'), dots=document.querySelector('.dots');
+slides.forEach((s,i)=>{s.id='s'+i;const a=document.createElement('a');a.href='#s'+i;a.setAttribute('aria-label','Lámina '+(i+1));dots.appendChild(a)});
+const links=dots.querySelectorAll('a');
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  // cur sigue a la lámina visible: el scroll ocurre en <body>, no en window
+  if(e.isIntersecting){const i=[...slides].indexOf(e.target);cur=i;links.forEach((l,j)=>l.classList.toggle('on',i===j))}
+}),{threshold:.55});
+slides.forEach(s=>io.observe(s));
+let cur=0;
+document.addEventListener('keydown',e=>{
+  if(['ArrowDown','ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();cur=Math.min(cur+1,slides.length-1)}
+  else if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();cur=Math.max(cur-1,0)}
+  else if(e.key==='Home')cur=0; else if(e.key==='End')cur=slides.length-1; else return;
+  slides[cur].scrollIntoView({behavior:'smooth'});
+});
+window.addEventListener('scroll',()=>{cur=Math.round(window.scrollY/window.innerHeight)},{passive:true});
+/* === VIDEO DEMO: parte desde cero al llegar a la lámina, se pausa al salir; clic = pausa/reanuda === */
+const demo=document.getElementById('demo');
+if(demo){
+  const RITMO=2/3;                                   // 46,5 s → 70 s: se lee con calma, igual que el GIF
+  demo.defaultPlaybackRate=demo.playbackRate=RITMO;
+  new IntersectionObserver(([e])=>{ if(e.isIntersecting){demo.currentTime=0;demo.playbackRate=RITMO;demo.play().catch(()=>{})} else demo.pause() },{threshold:.6}).observe(demo);
+  demo.addEventListener('click',()=>demo.paused?demo.play():demo.pause());
+}
+</script>
+</body>
+</html>

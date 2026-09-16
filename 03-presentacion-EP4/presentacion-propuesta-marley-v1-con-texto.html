@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta Food Service · Marley Coffee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* === PALETA Y ESCALA · idénticas a la presentación del diagnóstico === */
+:root{
+  --verde:#5E7E29; --verde-osc:#3B5218; --amar:#F7BE00;
+  --tinta:#1C1C1C; --carbon:#262626; --gris:#6E6E6E; --hueso:#F7F5F0; --blanco:#fff; --rojo:#B0331A;
+  --d1:clamp(1.75rem,5vw,6.5rem); --d2:clamp(1.25rem,3.05vw,3.8rem); --d3:clamp(.95rem,1.9vw,2rem);
+  --big:clamp(2.2rem,7.1vw,10.5rem); --body:clamp(.74rem,1.04vw,1.35rem); --sm:clamp(.6rem,.78vw,.98rem);
+  --pad:clamp(1.4rem,5.6vw,8rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow-x:hidden}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{font-family:'Archivo',sans-serif;color:var(--tinta);background:var(--tinta);font-size:var(--body);line-height:1.42;-webkit-font-smoothing:antialiased}
+
+/* === LÁMINA BASE === */
+.s{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;position:relative;
+   display:flex;flex-direction:column;justify-content:center;padding:var(--pad);background:var(--hueso);isolation:isolate}
+.s.dark{background:var(--carbon);color:var(--blanco)}
+.s.green{background:var(--verde);color:var(--blanco)}
+.s.yellow{background:var(--amar);color:var(--tinta)}
+.s::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.s::before{content:"";position:absolute;top:0;left:0;right:0;height:9px;z-index:3;
+  background:linear-gradient(90deg,var(--verde) 0 33.3%,var(--amar) 33.3% 66.6%,var(--tinta) 66.6% 100%)}
+.s.dark::before{background:linear-gradient(90deg,var(--amar) 0 33.3%,var(--verde) 33.3% 66.6%,var(--blanco) 66.6% 100%)}
+.s.green::before{background:linear-gradient(90deg,var(--amar) 0 50%,var(--tinta) 50% 100%)}
+.s.yellow::before{background:linear-gradient(90deg,var(--verde) 0 50%,var(--tinta) 50% 100%)}
+
+/* === FOTO DE FONDO === */
+.ph{position:absolute;inset:0;z-index:-3;background-size:cover;background-position:center;filter:contrast(1.06) brightness(.97)}
+.ph.right{background-position:right center}
+.tint{position:absolute;inset:0;z-index:-2;background:var(--verde);mix-blend-mode:multiply;opacity:.8}
+.tint.warm{background:#3a2a12;opacity:.7}
+.veil{position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(18,18,18,.92) 0 30%,rgba(18,18,18,.66) 50%,rgba(18,18,18,.16) 78%,transparent 100%)}
+.veil.flat{background:linear-gradient(100deg,rgba(16,16,16,.95) 0 55%,rgba(16,16,16,.86) 70%,rgba(16,16,16,.5) 86%,rgba(16,16,16,.2) 100%)}
+.s.photo{color:var(--blanco);background:var(--carbon)} .s.photo .mut{color:rgba(255,255,255,.8)}
+
+/* === TIPOGRAFÍA === */
+h1,h2,.num,.k,h3,h4{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.005em}
+h1{font-size:var(--d1);line-height:1}
+h2{font-size:var(--d2);line-height:1.02;margin-bottom:.4rem}
+h3{font-size:var(--d3);line-height:1.05;margin-bottom:.25rem}
+.lines{display:flex;flex-direction:column;align-items:flex-start;gap:.12em}
+.lines span{display:inline-block;line-height:1;padding:.09em 0}
+.lines span.hl{background:var(--amar);color:var(--tinta);padding:.09em .22em;transform:rotate(-1.1deg)}
+.lines span.hl:nth-child(even){transform:rotate(.8deg)}
+.eyebrow{font-size:var(--sm);letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--verde);margin-bottom:.7rem}
+.dark .eyebrow,.green .eyebrow,.photo .eyebrow{color:var(--amar)}
+.yellow .eyebrow{color:var(--verde-osc)}
+p{max-width:68ch}
+.lead{font-size:clamp(.8rem,1.27vw,1.6rem);line-height:1.45;max-width:60ch;margin-top:.8rem}
+.mut{color:var(--gris)} .dark .mut,.green .mut{color:rgba(255,255,255,.75)} .yellow .mut{color:#6a5500}
+.num{font-size:var(--big);line-height:.8;color:var(--verde)}
+.yellow .num{color:var(--tinta)}
+.rule{width:clamp(62px,6vw,110px);height:clamp(6px,.7vw,11px);background:var(--amar);margin:.9rem 0;transform:skewX(-14deg)}
+
+/* === TARJETAS Y GRILLAS === */
+.grid{display:grid;gap:clamp(.42rem,1.1vw,1.2rem);margin-top:clamp(.6rem,1.7vw,1.5rem)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,175px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}
+.card{background:var(--blanco);padding:clamp(.5rem,1.3vw,1.3rem);position:relative;box-shadow:5px 5px 0 rgba(0,0,0,.1)}
+.card:nth-child(odd){transform:rotate(-.4deg)} .card:nth-child(even){transform:rotate(.35deg)}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--verde)}
+.card.a::before{background:var(--amar)} .card.r::before{background:var(--rojo)}
+.dark .card{background:#333;color:var(--blanco);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+.photo .card{background:rgba(0,0,0,.66);color:var(--blanco);backdrop-filter:blur(3px)}
+.card .k{font-size:clamp(1.1rem,2.45vw,3.1rem);line-height:.88;color:var(--verde)}
+.dark .card .k,.photo .card .k{color:var(--amar)}
+.card h4{font-size:clamp(.78rem,1.27vw,1.45rem);line-height:1;margin-bottom:.25rem}
+.card .l{font-size:var(--sm);line-height:1.32;margin-top:.24rem;color:var(--gris)}
+.dark .card .l,.photo .card .l{color:rgba(255,255,255,.8)}
+.kl{font-size:var(--sm);font-weight:800;text-transform:uppercase;letter-spacing:.05em;line-height:1.15;margin:.12rem 0 .2rem;color:var(--verde-osc)}
+
+.split{display:grid;grid-template-columns:1.5fr .78fr;gap:clamp(.8rem,2.4vw,3rem);align-items:center}
+.split.even{grid-template-columns:1fr 1fr}
+.src{font-size:calc(var(--sm)*.88);color:var(--gris);margin-top:.8rem;font-style:italic;max-width:96ch}
+.dark .src,.green .src,.photo .src{color:rgba(255,255,255,.62)} .yellow .src{color:#6a5500}
+
+table{width:100%;border-collapse:collapse;font-size:clamp(.62rem,.9vw,1.12rem);margin-top:.8rem}
+th{background:var(--tinta);color:var(--blanco);text-align:left;padding:.55rem .75rem;font-size:calc(var(--sm)*.94);text-transform:uppercase;letter-spacing:.06em}
+td{padding:.5rem .75rem;border-bottom:1px solid #e2ddd2;background:var(--blanco);vertical-align:top}
+.dark td{background:#333;border-color:#444}
+
+.chain{display:grid;gap:.32rem;margin-top:.15rem}
+.chain div{background:var(--blanco);padding:.55rem .95rem;font-size:var(--sm);border-left:7px solid var(--verde);line-height:1.34}
+.dark .chain div{background:#333}
+.chain div.root{background:var(--amar);color:var(--tinta);border-left-color:var(--tinta);font-family:'Anton',sans-serif;
+  text-transform:uppercase;font-size:clamp(.75rem,1.27vw,1.55rem);letter-spacing:.02em;transform:rotate(-.5deg);box-shadow:4px 4px 0 rgba(0,0,0,.25)}
+.chain div b{font-family:'Anton',sans-serif;font-weight:400;color:var(--verde);margin-right:.3rem}
+.dark .chain div b{color:var(--amar)}
+
+.tag{display:inline-block;align-self:flex-start;background:var(--tinta);color:var(--amar);font-size:var(--sm);font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;padding:.2rem .55rem;margin-bottom:.6rem;transform:rotate(-1.4deg)}
+.yellow .tag{background:var(--tinta)}
+.diag{position:absolute;right:-6%;top:-10%;width:32vw;height:130%;z-index:-1;opacity:.09;
+  background:repeating-linear-gradient(-20deg,var(--verde) 0 22px,transparent 22px 62px,var(--amar) 62px 84px,transparent 84px 124px)}
+footer.f{position:absolute;bottom:calc(var(--pad)*.42);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;
+  font-size:var(--sm);color:var(--gris);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.dark footer.f,.green footer.f,.photo footer.f{color:rgba(255,255,255,.6)} .yellow footer.f{color:#6a5500}
+.brand{display:flex;align-items:center;gap:.5rem;font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.09em;font-size:var(--sm)}
+.brand i{width:20px;height:20px;border-radius:50%;background:var(--amar);flex-shrink:0;box-shadow:0 0 0 3px rgba(94,126,41,.85)}
+.dots{position:fixed;right:clamp(.35rem,1vw,.9rem);top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:6px}
+.dots a{width:7px;height:7px;border-radius:50%;background:rgba(128,128,128,.4);display:block;transition:.18s}
+.dots a.on{background:var(--amar);transform:scale(1.6);box-shadow:0 0 0 2px rgba(94,126,41,.7)}
+
+/* === EMBUDO (del deck anterior) === */
+.s.mint{background:#E9EFDC;color:var(--tinta)}
+.s.mint::before{background:linear-gradient(90deg,var(--verde) 0 50%,var(--amar) 50% 100%)}
+.mint .eyebrow{color:var(--verde-osc)} .mint footer.f{color:#7a8768} .mint .src{color:#5b6849}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.5vw,8px)}
+.fstep{width:var(--w);background:var(--verde);color:var(--blanco);text-align:center;
+  padding:clamp(.5rem,1.05vw,1.05rem) 9%;clip-path:polygon(0 0,100% 0,96% 100%,4% 100%);box-shadow:5px 5px 0 rgba(0,0,0,.13)}
+.fstep b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(.8rem,1.32vw,1.6rem);line-height:1}
+.fstep i{display:block;font-style:normal;font-size:var(--sm);line-height:1.25;opacity:.92;margin-top:.22rem}
+
+/* === CAPACIDADES / OBJETIVOS ESPECÍFICOS === */
+.caps{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(.3rem,.7vw,.78rem);margin-top:clamp(.6rem,1.4vw,1.3rem)}
+.cap{background:var(--blanco);border-top:5px solid var(--verde);padding:clamp(.42rem,.9vw,.9rem);box-shadow:4px 4px 0 rgba(0,0,0,.12);display:flex;gap:.5rem;align-items:flex-start}
+.cap em{font-style:normal;font-family:'Anton',sans-serif;color:var(--verde);flex-shrink:0;line-height:1;font-size:clamp(.85rem,1.4vw,1.7rem)}
+.cap b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(.72rem,1.1vw,1.28rem);line-height:1}
+.cap span{display:block;font-size:calc(var(--sm)*.96);line-height:1.28;color:var(--gris);margin-top:.18rem}
+
+/* === CIERRE === */
+.cierre{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;
+  font-size:clamp(.95rem,1.85vw,2.35rem);line-height:1.12;margin-top:clamp(.8rem,2vw,1.8rem);max-width:min(94%,880px)}
+.cierre b{color:var(--amar)}
+.sub{font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-top:.75rem;opacity:.82}
+
+/* ══ COMPONENTES NUEVOS DE ESTA PRESENTACIÓN ══ */
+/* listas cortas dentro de tarjetas */
+.lst{list-style:none;margin-top:.3rem}
+.lst li{position:relative;padding-left:1.05em;font-size:var(--sm);line-height:1.32;margin:.24rem 0}
+.lst li::before{content:"";position:absolute;left:0;top:.42em;width:.48em;height:.48em;background:var(--verde)}
+.card.r .lst li::before{background:var(--rojo)} .card.a .lst li::before{background:var(--amar)}
+/* pasos numerados (fases, flujos, tareas) */
+.flow{display:grid;gap:clamp(.25rem,.5vw,.45rem);margin-top:.35rem}
+.flow>div{display:flex;gap:.7rem;align-items:center;background:var(--blanco);padding:clamp(.32rem,.66vw,.66rem) clamp(.5rem,.9vw,.9rem);
+  border-left:6px solid var(--verde);font-size:var(--sm);line-height:1.3;box-shadow:3px 3px 0 rgba(0,0,0,.08)}
+.flow>div b{font-family:'Anton',sans-serif;font-weight:400;color:var(--verde);font-size:clamp(.9rem,1.5vw,1.8rem);line-height:1;min-width:1.5em}
+.flow strong{display:block;font-weight:800}
+.dark .flow>div{background:#333;border-left-color:var(--amar)} .dark .flow>div b{color:var(--amar)}
+/* cadena sobre foto y sobre verde pastel */
+.photo .chain div:not(.root){background:rgba(0,0,0,.62);color:#fff} .photo .chain div b{color:var(--amar)}
+/* capturas del prototipo */
+.screen{margin:0;background:#fff;border:4px solid var(--tinta);box-shadow:8px 8px 0 var(--verde)}
+.dark .screen{border-color:#111;box-shadow:8px 8px 0 var(--amar)}
+.screen img,.screen video{display:block;width:100%;height:auto}
+.screen video{max-height:60vh;background:#111;cursor:pointer}
+/* lámina de demo: video grande + pasos del flujo */
+.demo-video{display:grid;grid-template-columns:1.8fr 1fr;gap:clamp(1rem,2.4vw,3rem);align-items:center;margin-top:clamp(.6rem,1.4vw,1.3rem)}
+.demo-video .demo-link{font-size:clamp(.8rem,1.35vw,1.7rem);white-space:nowrap}
+/* ══ VERSIÓN DIRECTORIO: menos texto, letra más grande ══ */
+.s .card .l,.flow>div{font-size:clamp(.66rem,1vw,1.25rem)}
+.fstep i{font-size:clamp(.64rem,.95vw,1.2rem)}
+.lst.lg li{font-size:clamp(.78rem,1.3vw,1.6rem);margin:.5rem 0}
+.caps.big .cap span{font-family:'Anton',sans-serif;font-size:clamp(.95rem,1.8vw,2.2rem);color:var(--tinta);margin-top:.3rem}
+.route.r4{grid-template-columns:repeat(4,1fr)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(.4rem,1vw,1.1rem);margin-top:clamp(.8rem,2vw,2rem)}
+.kpi{background:var(--blanco);padding:clamp(.6rem,1.4vw,1.4rem);border-top:6px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.12)}
+.kpi .k{font-family:'Anton',sans-serif;font-size:clamp(1.1rem,2.5vw,3.1rem);line-height:1}
+.kpi b{display:block;font-weight:800;font-size:clamp(.7rem,1.1vw,1.35rem);margin-top:.5rem}
+.kpi span{display:block;font-size:clamp(.62rem,.95vw,1.15rem);color:var(--verde-osc);font-weight:700;margin-top:.3rem}
+@media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.demo-link{display:inline-block;align-self:flex-start;margin-top:clamp(.9rem,2vw,1.8rem);background:var(--amar);color:var(--tinta);font-family:'Anton',sans-serif;
+  text-transform:uppercase;letter-spacing:.02em;font-size:clamp(1rem,2vw,2.4rem);line-height:1.05;padding:.45rem 1rem .5rem;transform:rotate(-.8deg);box-shadow:5px 5px 0 rgba(0,0,0,.3)}
+.demo-link span{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:var(--sm);letter-spacing:.2em;opacity:.7}
+/* recorrido de compra en flechas */
+.route{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:clamp(.6rem,1.3vw,1.2rem)}
+.route>div{background:var(--tinta);color:#fff;padding:clamp(.42rem,.85vw,.85rem) 1.5em clamp(.42rem,.85vw,.85rem) 1.7em;
+  clip-path:polygon(0 0,calc(100% - 1em) 0,100% 50%,calc(100% - 1em) 100%,0 100%,1em 50%)}
+.route>div:first-child{clip-path:polygon(0 0,calc(100% - 1em) 0,100% 50%,calc(100% - 1em) 100%,0 100%);padding-left:.9em}
+.route>div:nth-child(even){background:var(--verde)}
+.route b{display:block;font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(.72rem,1.15vw,1.35rem);line-height:1}
+.route span{display:block;font-size:calc(var(--sm)*.92);line-height:1.2;opacity:.88;margin-top:.15rem}
+/* embudo y tabla sobre fondo verde */
+.green .fstep{background:rgba(0,0,0,.34)} .green .fstep.ret{background:var(--amar);color:var(--tinta)}
+.green td{background:rgba(0,0,0,.24);border-color:rgba(255,255,255,.14);color:#fff} .green td:first-child{color:var(--amar);font-weight:800;width:38%}
+/* tabla de KPIs sobre amarillo */
+.yellow td:first-child{width:24%}
+
+@media (max-height:780px){:root{--big:clamp(2rem,6.5vw,4.6rem);--d1:clamp(1.6rem,4.4vw,3rem);--d2:clamp(1.15rem,2.7vw,1.9rem)}}
+@media (max-height:660px){:root{--pad:clamp(.75rem,2.4vw,1.6rem);--big:clamp(1.8rem,5.5vw,3.4rem)}.lead{font-size:.8rem;margin-top:.45rem}.dots{display:none}.rule{margin:.45rem 0}.split{grid-template-columns:1fr}}
+@media (max-height:540px){:root{--big:clamp(1.6rem,4.5vw,2.6rem);--d1:clamp(1.25rem,3.4vw,2rem);--d2:clamp(.98rem,2.2vw,1.4rem);--sm:.6rem}.lead{font-size:.73rem}.card .l{font-size:.6rem}.diag{display:none}}
+@media (max-width:860px){.split,.split.even{grid-template-columns:1fr}.caps{grid-template-columns:repeat(2,1fr)}.demo-video{grid-template-columns:1fr}.route{grid-template-columns:repeat(3,1fr)}.diag{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.s{height:auto;page-break-after:always}.dots{display:none}}
+</style>
+</head>
+<body>
+<nav class="dots" aria-label="Navegación"></nav>
+
+<!-- ══ 01 · PORTADA ══ -->
+<section class="s photo">
+  <div class="ph right" style="background-image:url(img/foto-1.jpg)"></div>
+  <div class="tint warm"></div><div class="veil"></div>
+  <div class="brand" style="margin-bottom:auto;color:#fff"><i></i><span>Marley Coffee · Chile</span></div>
+  <div>
+    <div class="eyebrow">Propuesta inicial integrada · MVP · UX/UI · Inbound · E-commerce</div>
+    <h1 class="lines"><span>Retener</span><span>en vez de</span><span class="hl">reconquistar</span></h1>
+    <div class="rule"></div>
+    <p class="lead mut">Una consola para que Marley vea cada local a tiempo, y un WhatsApp para que el cliente
+    no tenga que perseguir a nadie.</p>
+  </div>
+  <footer class="f"><span>Taller Aplicado de Marketing III · Duoc UC</span><span>01 / 15</span></footer>
+</section>
+
+<!-- ══ 02 · EL DIAGNÓSTICO, EN UNA LÁMINA ══ -->
+<section class="s photo">
+  <div class="ph" style="background-image:url(img/foto-3.jpg)"></div>
+  <div class="tint warm" style="opacity:.8"></div><div class="veil flat"></div>
+  <div style="max-width:80%">
+    <div class="tag">De dónde partimos</div>
+    <h2 class="lines"><span>Marley no retiene a sus clientes:</span><span class="hl">los reconquista</span></h2>
+    <p class="lead">En Horeca, cada reposición reinicia la compra fuera de todo sistema, y cada reinicio expone al
+    cliente a un atraso, un quiebre o una máquina detenida que nadie vincula con su cuenta.</p>
+    <div class="grid g4">
+      <div class="card"><div class="k">82%</div><div class="l">de las reposiciones Horeca pasa por ejecutivo, correo o mensajería [C]</div></div>
+      <div class="card"><div class="k">9,9%</div><div class="l">del food service se fuga al año por no-recompra: 287 puntos equivalentes [D]</div></div>
+      <div class="card"><div class="k">81%</div><div class="l">de esa fuga está en Horeca, donde Marley interviene sin permiso de terceros [D]</div></div>
+      <div class="card r"><div class="k">26%</div><div class="l">de fichas Horeca completas: no hay identificador único de cliente ni de local [D]</div></div>
+    </div>
+    <div class="chain" style="margin-top:.8rem">
+      <div class="root">Lo estructural: sin trazabilidad por local, Marley no ve la falla antes de que el cliente se vaya</div>
+      <div><b>C1</b> La reposición no está digitalizada &nbsp;·&nbsp; <b>C2</b> No hay señal propia en el local &nbsp;·&nbsp; <b>C3</b> 840 puntos de terceros sin gobierno de datos &nbsp;·&nbsp; <b>C4</b> Sin identidad común de cliente, local y máquina</div>
+    </div>
+    <p class="src">Estimación bajo supuestos, no pérdida observada: aplica la retención del caso (86% Horeca, 90% OCS) a los puntos activos.
+    Estaciones y panaderías no reportan retención, así que la cifra es un piso.</p>
+  </div>
+  <footer class="f"><span>Diagnóstico</span><span>02 / 15</span></footer>
+</section>
+
+<!-- ══ 03 · EL OBJETIVO ══ -->
+<section class="s yellow">
+  <div class="eyebrow">El objetivo</div>
+  <div class="num" style="font-size:clamp(2.4rem,7.4vw,10rem)">9,9% → 7,6%</div>
+  <h2 style="margin-top:.6rem;max-width:34ch">Reducir la fuga estimada de ingresos del food service en doce meses</h2>
+  <p class="lead" style="margin-top:.3rem">reteniendo en Horeca a los clientes que hoy se reconquistan. Es la meta oficial de
+  retención Horeca de 86% a 90% [C], traducida a ingresos.</p>
+  <div class="caps">
+    <div class="cap"><em>OE1</em><div><b>Fichas completas</b><span>26% → 80% en 6 meses, para identificar cada baja</span></div></div>
+    <div class="cap"><em>OE2</em><div><b>Reposición digital</b><span>18% → 40% en 12 meses, para dejar de reconquistar</span></div></div>
+    <div class="cap"><em>OE3</em><div><b>Detección anticipada</b><span>0% → 60% en 12 meses, para retener a tiempo</span></div></div>
+    <div class="cap"><em>OE4</em><div><b>Terceros con datos</b><span>0% → 80% en 8 meses, para medir su fuga</span></div></div>
+    <div class="cap"><em>OE5</em><div><b>Leads clasificados</b><span>0% → 100% en 3 meses, para separar reposición de crecimiento</span></div></div>
+  </div>
+  <footer class="f"><span>Objetivo general y específicos</span><span>03 / 15</span></footer>
+</section>
+
+<!-- ══ 04 · 1.1 ALCANCE DEL MVP ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.1 · Alcance del MVP</div>
+  <h2>Una consola y un WhatsApp,<br>14 locales, 90 días</h2>
+  <div class="grid g2">
+    <div class="card"><h4>Entra</h4><ul class="lst">
+      <li><b>Maestro de locales:</b> RUT, local, máquina y condiciones de contrato</li>
+      <li><b>WhatsApp automatizado:</b> aviso de fecha de reparto y mantención, agenda, pedido de siempre, estado del envío y fallas</li>
+      <li><b>Consola:</b> semáforo de riesgo, cola Hoy, despachos, servicio técnico e integraciones</li>
+      <li><b>Registro:</b> acciones comerciales y motivo de baja obligatorio</li>
+      <li><b>Terceros:</b> plantilla mensual de datos, sin integración</li></ul></div>
+    <div class="card r"><h4>Queda fuera, por ahora</h4><ul class="lst">
+      <li><b>Portal web del cliente:</b> el cliente ya pide por mensajería</li>
+      <li><b>Telemetría:</b> falta confirmar qué máquinas pueden enviar datos</li>
+      <li><b>Modelo predictivo:</b> 14 locales no generan casos suficientes</li>
+      <li><b>Estaciones y panaderías:</b> requieren aprobación del operador</li>
+      <li><b>Ruteo, flota y bodega:</b> la consola mapea, no planifica</li></ul></div>
+  </div>
+  <div class="grid g4">
+    <div class="card a"><div class="k">8 + 6</div><div class="l">locales Horeca y OCS: el máximo que permite el caso [C]</div></div>
+    <div class="card a"><div class="k">90</div><div class="l">días de piloto, con decisión fijada de antemano</div></div>
+    <div class="card a"><div class="k">0</div><div class="l">hardware nuevo: todo corre sobre CRM, ERP y WhatsApp</div></div>
+    <div class="card a"><div class="k">2</div><div class="l">hipótesis: el cliente acepta un canal que registra, y la fuga se anuncia</div></div>
+  </div>
+  <footer class="f"><span>MVP</span><span>04 / 15</span></footer>
+</section>
+
+<!-- ══ 05 · 1.2 PROPUESTA DE VALOR ══ -->
+<section class="s mint">
+  <div class="tag">1.2 · Propuesta de valor</div>
+  <h2>Al cliente se le quita trabajo.<br>A Marley se le da visibilidad.</h2>
+  <div class="grid g2">
+    <div class="card a"><h4>Dueño Horeca y encargado OCS</h4><div class="kl">Recibe cuando está en el local, sin perseguir a nadie</div><ul class="lst">
+      <li>Marley le avisa que se acerca su fecha de reparto o de mantención</li>
+      <li>Elige día y franja; si surge un imprevisto, reagenda</li>
+      <li>Repite «lo de siempre» con su precio de contrato y sigue el envío</li>
+      <li>Reporta una falla sin llamar: el ticket nace con la máquina</li></ul></div>
+    <div class="card"><h4>Equipo comercial, coordinación y técnicos</h4><div class="kl">Ve cada local y se adelanta al reclamo</div><ul class="lst">
+      <li>A quién llamar hoy, y por qué está en rojo</li>
+      <li>Qué está agendado, en ruta o atrasado</li>
+      <li>Qué máquina espera técnico y cuáles fallan seguido</li>
+      <li>Si la fuga baja en el piloto frente a la red</li></ul></div>
+  </div>
+  <div class="chain" style="margin-top:.8rem">
+    <div class="root">Regla de diseño: la señal nunca depende de que el dueño haga algo extra</div>
+    <div><b>Por qué Marley</b> Nestlé lidera el canal institucional con 60–70% [P] y compite por continuidad. Ninguno de nueve proveedores revisados declara pedido con seguimiento ni reposición automática [EV]. Lo propio de Marley es convertir el canal que el cliente ya usa en el dato que lo alimenta.</div>
+  </div>
+  <p class="src">Segmentos del piloto: locales Horeca de la Región Metropolitana y OCS de atención directa [C].</p>
+  <footer class="f"><span>Propuesta de valor</span><span>05 / 15</span></footer>
+</section>
+
+<!-- ══ 06 · 1.3 VIABILIDAD ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.3 · Viabilidad del plan</div>
+  <h2>Se hace con lo que Marley ya tiene</h2>
+  <div class="split even" style="align-items:start;margin-top:.5rem">
+    <div>
+      <div class="flow">
+        <div><b>0</b><span><strong>Semanas 1–6 · Base</strong>Maestro de los 14 locales, consola base, plantillas de WhatsApp aprobadas y consentimiento</span></div>
+        <div><b>1</b><span><strong>Meses 2–4 · Piloto</strong>Repartos agendados, pedidos y tickets por WhatsApp; semáforo con reglas iniciales</span></div>
+        <div><b>2</b><span><strong>Meses 5–8 · Calibrar</strong>Pesos del semáforo con el historial real; ampliar Horeca por tramos</span></div>
+        <div><b>3</b><span><strong>Meses 9–12 · Escalar</strong>Hasta 40% de reposición digital en Horeca</span></div>
+      </div>
+      <p class="src">Equipo del caso: sponsor 10% · marketing 50% · comercial B2B 100% · analista de datos 50% [C]. Sin hardware y dentro del tope de $220 millones [C]; el costeo se detalla en la siguiente etapa.</p>
+    </div>
+    <div>
+      <table style="margin-top:0"><thead><tr><th>Al día 90</th><th>Escalar si</th><th>Detener si</th></tr></thead><tbody>
+        <tr><td>Locales con 2+ pedidos por WhatsApp</td><td>≥ 60%</td><td>&lt; 30%</td></tr>
+        <tr><td>Pedidos asociados a su local</td><td>≥ 95%</td><td>&lt; 80%</td></tr>
+        <tr><td>Alertas con acción en ≤ 2 días</td><td>≥ 80%</td><td>&lt; 50%</td></tr>
+        <tr><td>Visitas agendadas por el cliente</td><td>≥ 50%</td><td>&lt; 25%</td></tr>
+      </tbody></table>
+      <div class="chain" style="margin-top:.7rem">
+        <div><b>Si cambia</b> Si el semáforo marca a casi todos, se recalibran los pesos · Si las máquinas envían datos, la telemetría entra como una fuente más · Si la adopción no llega, se detiene antes de escalar</div>
+      </div>
+    </div>
+  </div>
+  <footer class="f"><span>Viabilidad</span><span>06 / 15</span></footer>
+</section>
+
+<!-- ══ 07 · 1.4 ARQUITECTURA Y FLUJOS ══ -->
+<section class="s dark">
+  <div class="tag">1.4 · Arquitectura y flujos</div>
+  <h2>Conecta lo que existe,<br>no lo reemplaza</h2>
+  <div class="split even" style="align-items:start;margin-top:.6rem">
+    <div>
+      <figure class="screen"><img src="img/app-hub.jpg" alt="Arquitectura: la consola conecta CRM y ERP con WhatsApp y terceros"></figure>
+      <div class="grid g3" style="margin-top:1rem">
+        <div class="card"><h4>Seguimiento</h4><div class="l">Resumen · Hoy · Locales · Conversaciones</div></div>
+        <div class="card"><h4>Operación</h4><div class="l">Pedidos · Despachos · Servicio técnico</div></div>
+        <div class="card"><h4>Sistema</h4><div class="l">Reglas del semáforo · Integraciones</div></div>
+      </div>
+      <p class="src">La entidad central es el local: RUT, código de local y número de máquina. Un selector cambia todas las vistas entre el piloto (14 locales) y la red (2.410).</p>
+    </div>
+    <div>
+      <div class="eyebrow">Flujo principal · reparto programado</div>
+      <div class="flow">
+        <div><b>1</b><span>Marley avisa cinco días antes de la fecha estimada del local</span></div>
+        <div><b>2</b><span>El cliente elige día y franja según su disponibilidad</span></div>
+        <div><b>3</b><span>El pedido queda programado en el ERP y le llega el correo</span></div>
+        <div><b>4</b><span>El día anterior, recordatorio: confirmar, reagendar o cancelar</span></div>
+        <div><b>5</b><span>El repartidor marca la entrega: suma historial y alimenta el semáforo</span></div>
+      </div>
+      <p class="src">Otros flujos: aviso de atraso · falla de máquina con ticket · cuenta en rojo a la cola Hoy · mantención agendada.</p>
+    </div>
+  </div>
+  <footer class="f"><span>Prototipo UX/UI</span><span>07 / 15</span></footer>
+</section>
+
+<!-- ══ 08 · DEMO DEL PROTOTIPO ══ -->
+<section class="s dark">
+  <div class="tag">El prototipo</div>
+  <h2>La consola, funcionando</h2>
+  <div class="demo-video">
+    <figure class="screen"><video id="demo" src="marley-demo.mp4" poster="img/demo-poster.jpg" muted loop playsinline preload="auto" aria-label="Video demo: del WhatsApp a la ficha y al calendario de despachos"></video></figure>
+    <div>
+      <div class="flow">
+        <div><b>1</b><span>Marley avisa que se acerca la fecha del local</span></div>
+        <div><b>2</b><span>El cliente responde por WhatsApp y elige día y horario</span></div>
+        <div><b>3</b><span>La ficha y el calendario de despachos se actualizan solos</span></div>
+        <div><b>4</b><span>Si surge un imprevisto, reagenda cuando el cliente puede</span></div>
+      </div>
+      <div class="demo-link"><span>Demo en vivo</span>alejog1302.github.io/marley-consola</div>
+    </div>
+  </div>
+  <p class="src">Datos sintéticos: 2.410 locales y 180 días de pedidos generados con semilla fija y calibrados a las líneas base del caso. Ningún dato corresponde a clientes reales.</p>
+  <footer class="f"><span>Demo</span><span>08 / 15</span></footer>
+</section>
+
+<!-- ══ 09 · 1.5 DECISIONES UX/UI ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.5 · Decisiones UX/UI</div>
+  <h2>Cada pantalla responde a un hallazgo</h2>
+  <table>
+    <thead><tr><th>Hallazgo</th><th>Decisión de diseño</th><th>Dónde se ve</th></tr></thead>
+    <tbody>
+      <tr><td>El 82% ya pide por mensajería o al ejecutivo [C]</td><td><b>El cliente no aprende un sistema:</b> todo ocurre en WhatsApp</td><td>Conversaciones</td></tr>
+      <tr><td>Si depende de que el dueño reporte, falla (docente)</td><td><b>Las señales salen del sistema:</b> silencio, entregas, tickets y reclamos</td><td>Reglas</td></tr>
+      <tr><td>Un reparto a un local cerrado es un viaje perdido [H]</td><td><b>Agenda por día y franja</b> que el cliente elige y puede cambiar</td><td>Despachos</td></tr>
+      <tr><td>Sin visibilidad del pedido: primera fricción de Horeca [C]</td><td><b>Estado del envío y aviso de atraso</b> antes de que pregunte</td><td>Despachos · WhatsApp</td></tr>
+      <tr><td>Priorizar con un puntaje opaco suele fallar (Ascarza, 2018)</td><td><b>Semáforo explicable:</b> cada color muestra su porqué y su origen</td><td>Hoy · Ficha · Reglas</td></tr>
+      <tr><td>Tickets con máquina identificada sólo en 75% de los casos [C]</td><td><b>El ticket nace con la máquina</b> identificada desde el chat</td><td>Servicio técnico</td></tr>
+    </tbody>
+  </table>
+  <figure class="screen" style="margin-top:1rem;width:min(64%,1100px)"><img src="img/app-reglas.jpg" alt="Cómo funciona el semáforo, con un local real del piloto"></figure>
+  <footer class="f"><span>Decisiones de diseño</span><span>09 / 15</span></footer>
+</section>
+
+<!-- ══ 10 · 1.6 VALIDACIÓN TEMPRANA ══ -->
+<section class="s dark">
+  <div class="tag">1.6 · Validación temprana</div>
+  <h2>Nueve hallazgos, nueve ajustes</h2>
+  <div class="split even" style="align-items:start;margin-top:.4rem">
+    <div>
+      <div class="grid g3" style="margin-top:.2rem">
+        <div class="card a"><div class="k">9</div><div class="l">hallazgos registrados</div></div>
+        <div class="card r"><div class="k">6</div><div class="l">de severidad alta</div></div>
+        <div class="card"><div class="k">9</div><div class="l">mejoras ya incorporadas</div></div>
+      </div>
+      <div class="chain" style="margin-top:.8rem">
+        <div><b>Docente</b> Si el mecanismo depende del dueño, falla → ninguna señal exige una acción del cliente</div>
+        <div><b>Revisión</b> No se entendía cómo decide el semáforo → «cómo funciona» con un local real</div>
+        <div><b>Revisión</b> Despachos se leía como análisis logístico → mapa de estados y agenda</div>
+        <div><b>Revisión</b> No se veía que se conecta a lo existente → sección Integraciones</div>
+      </div>
+      <p class="src">Fuentes: reunión con el docente (8 de septiembre de 2026) y revisiones de recorrido de las versiones 1 y 2 del prototipo. Todavía no se aplica un test con usuarios, y así se declara.</p>
+    </div>
+    <div>
+      <div class="eyebrow">Próxima iteración · test de tareas</div>
+      <div class="flow">
+        <div><b>T1</b><span>Encontrar el local más urgente y explicar por qué está en rojo</span></div>
+        <div><b>T2</b><span>Registrar que se llamó a ese local</span></div>
+        <div><b>T3</b><span>Encontrar qué local reagendó su reparto y para qué día</span></div>
+        <div><b>T4</b><span>Identificar la máquina que lleva más tiempo sin técnico</span></div>
+        <div><b>T5</b><span>Explicar con qué sistemas se conecta la consola</span></div>
+      </div>
+      <p class="src">Tres a cinco personas con perfil comercial o de coordinación. Se mide éxito, tiempo y dificultad percibida de 1 a 7.</p>
+    </div>
+  </div>
+  <footer class="f"><span>Validación</span><span>10 / 15</span></footer>
+</section>
+
+<!-- ══ 11 · 1.7 INBOUND AUTOMATIZADO ══ -->
+<section class="s green">
+  <div class="tag">1.7 · Inbound automatizado</div>
+  <h2>Captar con contenido,<br>retener con avisos</h2>
+  <div class="split even" style="align-items:start;margin-top:.6rem">
+    <div class="funnel">
+      <div class="fstep" style="--w:100%"><b>Atraer</b><i>Video de 30 s del pedido por WhatsApp · checklist de continuidad → formulario inteligente</i></div>
+      <div class="fstep" style="--w:90%"><b>Convertir</b><i>Video de comodato y soporte · ficha de máquinas → agenda por WhatsApp</i></div>
+      <div class="fstep" style="--w:80%"><b>Cerrar</b><i>Demo de 15 minutos · propuesta → alta con ficha completa</i></div>
+      <div class="fstep ret" style="--w:70%"><b>Retener</b><i>Bienvenida · cápsula mensual · aviso de reparto y de mantención</i></div>
+    </div>
+    <div>
+      <div class="eyebrow">Gatillo → acción automática</div>
+      <table style="margin-top:0"><tbody>
+        <tr><td>Llega un lead web</td><td>Se clasifica por canal y tamaño, y se asigna un ejecutivo</td></tr>
+        <tr><td>5 días antes de la fecha estimada</td><td>«Se acerca tu fecha de reparto, ¿programamos tu pedido?»</td></tr>
+        <tr><td>Día anterior, 17:00</td><td>Recordatorio con confirmar, reagendar o cancelar</td></tr>
+        <tr><td>Se cumplen 90 días sin mantención</td><td>Ofrece días y franjas para la visita del técnico</td></tr>
+        <tr><td>Puntaje del semáforo ≥ 7</td><td>Tarea al ejecutivo: esa conversación la tiene una persona</td></tr>
+      </tbody></table>
+      <p class="src">Se mide por conducta —pedido, agenda, respuesta—, nunca por aperturas ni alcance. Los mensajes proactivos van sólo con plantillas aprobadas y consentimiento del cliente [P].</p>
+    </div>
+  </div>
+  <footer class="f"><span>Inbound</span><span>11 / 15</span></footer>
+</section>
+
+<!-- ══ 12 · 1.8 E-COMMERCE Y OPERACIÓN ══ -->
+<section class="s">
+  <div class="diag"></div>
+  <div class="tag">1.8 · E-commerce y operación</div>
+  <h2>La tienda vive en el chat.<br>La operación se ve en la consola.</h2>
+  <div class="route">
+    <div><b>Aviso</b><span>se acerca la fecha</span></div>
+    <div><b>Agenda</b><span>día y franja</span></div>
+    <div><b>Confirma</b><span>precio de contrato y correo</span></div>
+    <div><b>Recordatorio</b><span>confirmar o reagendar</span></div>
+    <div><b>En ruta</b><span>estado y aviso de atraso</span></div>
+    <div><b>Entregado</b><span>marca y evaluación</span></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h4>Cómo convierte</h4><ul class="lst">
+      <li>«Repetir pedido» en un toque: reposición digital de 18% a 40% [C]</li>
+      <li>El aviso llega antes de que se acabe el café, para cuando hay quien reciba</li>
+      <li>La negociación sigue siendo humana: traspaso al ejecutivo</li></ul></div>
+    <div class="card a"><h4>Qué pide a la operación</h4><ul class="lst">
+      <li>Pedido en el ERP con el identificador del local</li>
+      <li>Salida a ruta y entrega marcadas desde un enlace, sin app</li>
+      <li>Tickets con máquina y plantilla mensual de terceros</li></ul></div>
+    <div class="card r"><h4>Fricciones y cómo se evitan</h4><ul class="lst">
+      <li>Local cerrado al llegar → agenda y reagendar con aviso</li>
+      <li>Repartidor que no marca → enlace de un toque y cierre diario</li>
+      <li>ERP sin local → maestro de locales antes del piloto</li></ul></div>
+  </div>
+  <p class="src">La propuesta no rediseña bodegas ni rutas: Marley ya despacha con promesa de 48 h en la RM y 72–96 h en regiones [C]. La consola hace visible cada pedido, y la agenda evita viajes perdidos.</p>
+  <footer class="f"><span>E-commerce</span><span>12 / 15</span></footer>
+</section>
+
+<!-- ══ 13 · 1.9 KPIs ══ -->
+<section class="s yellow">
+  <div class="tag">1.9 · KPIs</div>
+  <h2>Cada indicador decide algo</h2>
+  <table>
+    <thead><tr><th>KPI</th><th>Hoy → meta</th><th>De dónde sale el dato</th><th>Qué decide</th></tr></thead>
+    <tbody>
+      <tr><td><b>Fuga estimada del food service</b></td><td>9,9% [D] → 7,6%</td><td>Renovaciones en CRM y ERP</td><td>Si el plan cumple su objetivo</td></tr>
+      <tr><td><b>Retención Horeca</b></td><td>86% → 90% [C]</td><td>CRM</td><td>Escalar a toda la red Horeca</td></tr>
+      <tr><td><b>Reposición digital Horeca</b></td><td>18% → 40% [C]</td><td>WhatsApp y ERP</td><td>Bajo 30% en el piloto, se detiene</td></tr>
+      <tr><td><b>Detección anticipada</b></td><td>0% → 60%</td><td>Semáforo de la consola</td><td>Recalibrar los pesos del semáforo</td></tr>
+      <tr><td><b>Visitas agendadas por el cliente</b></td><td>0% → ≥ 50%</td><td>Agenda de Despachos</td><td>Ajustar el aviso y las franjas</td></tr>
+      <tr><td><b>OTIF</b></td><td>92% → ≥ 96% [C]</td><td>Marca de entrega del repartidor</td><td>Dónde reforzar el cumplimiento</td></tr>
+      <tr><td><b>Primera respuesta técnica</b></td><td>31 h [C] → línea base</td><td>Tickets de la consola</td><td>Qué tickets priorizar primero</td></tr>
+    </tbody>
+  </table>
+  <p class="src">[C] dato del caso · [D] cálculo propio · [S] supuesto del equipo. La fuga y la retención se miden sobre Horeca + OCS; lo que llegue de terceros se reporta aparte.</p>
+  <footer class="f"><span>Medición</span><span>13 / 15</span></footer>
+</section>
+
+<!-- ══ 14 · CIERRE ══ -->
+<section class="s photo">
+  <div class="ph right" style="background-image:url(img/foto-5.jpg)"></div>
+  <div class="tint warm"></div><div class="veil"></div>
+  <div class="eyebrow">Lo que proponemos</div>
+  <h1 class="lines"><span>Que cada pedido</span><span>deje</span><span class="hl" style="padding-top:.2em">una señal</span></h1>
+  <div class="rule"></div>
+  <p class="lead">Marley ya tiene la red, el canal y la relación. Lo que le falta es verla a tiempo.</p>
+  <div class="cierre">Retener en vez de reconquistar.<b style="display:block;margin-top:.28em">De 9,9% a 7,6% de fuga en doce meses.</b></div>
+  <div class="sub">Próximos pasos · entrevistas a decisores · validar el prototipo con usuarios · verificar telemetría · costeo</div>
+  <footer class="f"><span>Marley Coffee · Food Service</span><span>14 / 15</span></footer>
+</section>
+
+<!-- ══ 15 · DECLARACIÓN DE USO DE IA ══ -->
+<section class="s">
+  <div class="tag">Declaración</div>
+  <h2>Uso de inteligencia artificial</h2>
+  <table style="max-width:1400px">
+    <tbody>
+      <tr><td style="width:18%"><b>Herramienta</b></td><td>Claude (Anthropic), mediante Claude Code</td></tr>
+      <tr><td><b>Propósito</b></td><td>Ordenar el relato y las láminas, apoyar la redacción, construir el prototipo con datos sintéticos y revisar la coherencia entre informe, prototipo y presentación</td></tr>
+      <tr><td><b>Verificación</b></td><td>Cada cifra se contrastó con el documento del caso; las fuentes públicas se abrieron y revisaron; los datos del prototipo son sintéticos y se declaran como tales; ningún dato, resultado de test ni fuente fue generado por IA</td></tr>
+    </tbody>
+  </table>
+  <footer class="f"><span>Taller Aplicado de Marketing III · Duoc UC</span><span>15 / 15</span></footer>
+</section>
+
+<script>
+/* === NAVEGACIÓN: puntos laterales y teclado === */
+const slides=document.querySelectorAll('.s'), dots=document.querySelector('.dots');
+slides.forEach((s,i)=>{s.id='s'+i;const a=document.createElement('a');a.href='#s'+i;a.setAttribute('aria-label','Lámina '+(i+1));dots.appendChild(a)});
+const links=dots.querySelectorAll('a');
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  // cur sigue a la lámina visible: el scroll ocurre en <body>, no en window
+  if(e.isIntersecting){const i=[...slides].indexOf(e.target);cur=i;links.forEach((l,j)=>l.classList.toggle('on',i===j))}
+}),{threshold:.55});
+slides.forEach(s=>io.observe(s));
+let cur=0;
+document.addEventListener('keydown',e=>{
+  if(['ArrowDown','ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();cur=Math.min(cur+1,slides.length-1)}
+  else if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();cur=Math.max(cur-1,0)}
+  else if(e.key==='Home')cur=0; else if(e.key==='End')cur=slides.length-1; else return;
+  slides[cur].scrollIntoView({behavior:'smooth'});
+});
+window.addEventListener('scroll',()=>{cur=Math.round(window.scrollY/window.innerHeight)},{passive:true});
+/* === VIDEO DEMO: parte desde cero al llegar a la lámina, se pausa al salir; clic = pausa/reanuda === */
+const demo=document.getElementById('demo');
+if(demo){
+  new IntersectionObserver(([e])=>{ if(e.isIntersecting){demo.currentTime=0;demo.play().catch(()=>{})} else demo.pause() },{threshold:.6}).observe(demo);
+  demo.addEventListener('click',()=>demo.paused?demo.play():demo.pause());
+}
+</script>
+</body>
+</html>
